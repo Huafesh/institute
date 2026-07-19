@@ -1,15 +1,30 @@
-# institute
+# 🎓 Ceind Institute - Plataforma LMS
 
-Este repositorio contiene el código del proyecto **institute**, clasificado como **Aplicación Frontend (Sitio Web estático)**.
+Una plataforma frontend completa de gestión de aprendizaje (LMS) para el 'Ceind Institute'. Permite a los estudiantes ver dashboards de actividades, reproducir cursos y gestionar perfiles.
 
-## Tecnologías Utilizadas
+---
 
-- HTML5
-- CSS3 / JavaScript
+## 🚀 Características Principales
+
+* Reproductor de cursos interactivo (`course_player.html`).
+* Dashboard del estudiante con estadísticas de actividades.
+* Panel de administración interactivo para instructores (`admin_panel.html`).
+* Mecanismos de depuración visual integrados.
+
+---
+
+## 🛠️ Tecnologías Utilizadas
+
+* HTML5
+* CSS3 / Custom design
+* JavaScript (Navegación dinámica y depuración)
+
+---
 
 ### Ejecución
 
-1. Abre el archivo `index.html` directamente en cualquier navegador web, o utiliza una extensión como *Live Server* en tu editor de código para ejecutarlo de forma local.
+1. Abre `dashboard.html` o `index.html` en tu navegador de forma local (se recomienda usar *Live Server* en VS Code).
+2. Navega a través de las distintas secciones del portal para estudiantes o administradores.
 
 ---
-*Generado automáticamente para la organización y catalogación de proyectos.*
+*Este repositorio ha sido configurado y catalogado automáticamente.*
