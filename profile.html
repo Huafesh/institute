@@ -1,0 +1,2425 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="assets/Favicon.png">
+    <title>Mi Perfil | Ceind Institute</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@23.0.1/build/css/intlTelInput.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@23.0.1/build/js/intlTelInput.min.js"></script>
+
+    <style>
+        :root {
+            --primary-color: #003d80;
+            --secondary-color: #00a8ff;
+            --accent-color: #ffcc00;
+            --bg-color: #f4f7f6;
+            --sidebar-width: 280px;
+            --text-color: #444;
+            --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            --card-bg: #fff;
+            --title-color: #111;
+            --border-radius: 20px;
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        body.dark-mode {
+            --bg-color: #0f0f0f;
+            --text-color: #d0d0d0;
+            --card-bg: #1e1e1e;
+            --title-color: #f0f0f0;
+            --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Dark Mode Overrides for Profile Components */
+        body.dark-mode .profile-card,
+        body.dark-mode .content-card,
+        body.dark-mode .modal-content {
+            background: var(--card-bg);
+            border: 1px solid #333;
+        }
+
+        body.dark-mode .tab-link {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        body.dark-mode .tab-link.active {
+            color: #fff;
+        }
+
+        body.dark-mode .stat-item p,
+        body.dark-mode .info-label,
+        body.dark-mode .setting-info p {
+            color: #ccc;
+        }
+
+        body.dark-mode .academic-item p {
+            color: #ccc;
+        }
+
+        body.dark-mode .info-value,
+        body.dark-mode .form-group div {
+            color: #ddd;
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        body.dark-mode .settings-list .setting-item {
+            border-color: rgba(255, 255, 255, 0.05);
+        }
+
+        body.dark-mode .btn-outline {
+            border-color: #444;
+            color: #ccc;
+        }
+
+        body.dark-mode .modal-header,
+        body.dark-mode .editable-field {
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        body.dark-mode .edit-input,
+        body.dark-mode .custom-select {
+            background: rgba(0, 0, 0, 0.3);
+            border-color: #444;
+            color: #fff;
+        }
+
+        /* View Transition for Theme Switch */
+        ::view-transition-old(root),
+        ::view-transition-new(root) {
+            animation: none;
+            mix-blend-mode: normal;
+        }
+
+        /* Icon Shapeshift Animation */
+        .theme-toggle i {
+            view-transition-name: theme-icon;
+        }
+
+        ::view-transition-old(theme-icon) {
+            animation: icon-out 0.5s cubic-bezier(0.76, 0, 0.24, 1) forwards;
+        }
+
+        ::view-transition-new(theme-icon) {
+            animation: icon-in 0.5s cubic-bezier(0.76, 0, 0.24, 1) forwards;
+        }
+
+        @keyframes icon-out {
+            0% {
+                transform: scale(1) rotate(0deg);
+                opacity: 1;
+            }
+
+            100% {
+                transform: scale(0) rotate(180deg);
+                opacity: 0;
+            }
+        }
+
+        @keyframes icon-in {
+            0% {
+                transform: scale(0) rotate(-180deg);
+                opacity: 0;
+            }
+
+            100% {
+                transform: scale(1) rotate(0deg);
+                opacity: 1;
+            }
+        }
+
+        /* Theme Toggle Button */
+        .theme-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.2rem;
+            color: white;
+            /* In header it should be white, distinct from dashboard generic grey */
+            transition: 0.3s;
+            position: absolute;
+            top: 30px;
+            right: 40px;
+            display: inline-flex;
+            align-items: center;
+            padding: 5px;
+        }
+
+        .theme-toggle:hover {
+            color: var(--primary-color);
+            transform: scale(1.1);
+        }
+
+        body.dark-mode .theme-toggle {
+            color: #d0d0d0;
+        }
+
+
+
+        /* --- INT-TEL-INPUT CUSTOMIZATION --- */
+        .iti {
+            width: 100%;
+            display: block;
+        }
+
+        .iti__country-list {
+            z-index: 100 !important;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            border: none;
+            overflow-x: hidden;
+            /* Force white text in light mode if needed, but let's stick to defaults until dark mode override */
+        }
+
+
+
+
+
+
+
+        /* Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-color);
+            display: flex;
+            min-height: 100vh;
+            color: var(--text-color);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        body.dark-mode ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        body.dark-mode ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* --- SIDEBAR --- */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--primary-color);
+            color: #fff;
+            position: fixed;
+            height: 100%;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 5px 0 15px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .user-profile:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .user-avatar-sm {
+            width: 45px;
+            height: 45px;
+            background: var(--secondary-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: white;
+        }
+
+        .user-info h4 {
+            font-size: 0.95rem;
+            margin: 0;
+        }
+
+        .user-info span {
+            font-size: 0.75rem;
+            opacity: 0.8;
+        }
+
+        .menu-items li {
+            list-style: none;
+            margin-bottom: 10px;
+        }
+
+        .menu-items a {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 12px 15px;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            border-radius: 8px;
+            transition: var(--transition);
+            font-size: 0.95rem;
+        }
+
+        .menu-items a:hover,
+        .menu-items a.active {
+            background: var(--secondary-color);
+            color: #fff;
+            transform: translateX(5px);
+        }
+
+        .logout {
+            margin-top: auto;
+            color: #ff6b6b;
+        }
+
+        .logout a:hover {
+            background: rgba(255, 107, 107, 0.2);
+            color: #ff6b6b;
+        }
+
+        /* --- MAIN CONTENT --- */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            flex: 1;
+            /* No padding initially for the cover image effect */
+        }
+
+        /* --- PREMIUM PROFILE STYLES --- */
+
+        /* 1. Cover Area */
+        /* 1. Cover Area */
+        .profile-cover {
+            height: 250px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            position: relative;
+            background-size: cover;
+            background-position: center;
+        }
+
+        /* Gradient Scrim for Readability */
+        .profile-cover::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100px;
+            /* Covers the text overlap area */
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0) 100%);
+            pointer-events: none;
+        }
+
+        .edit-cover-btn {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.6);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: var(--transition);
+            z-index: 10;
+        }
+
+        .edit-cover-btn:hover {
+            background: rgba(0, 0, 0, 0.8);
+        }
+
+        .profile-layout {
+            max-width: 1200px;
+            margin: -80px auto 40px;
+            padding: 0 40px;
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 30px;
+            position: relative;
+            pointer-events: none;
+        }
+
+        /* ... skipped intermediate ... REMOVED */
+
+        /* Tabs Navigation (Clean Design) */
+        .tabs-nav {
+            display: flex;
+            gap: 30px;
+            margin-bottom: 25px;
+            padding-top: 10px;
+        }
+
+        .tab-link {
+            padding-bottom: 10px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.7);
+            cursor: pointer;
+            position: relative;
+            transition: var(--transition);
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+        }
+
+        .tab-link:hover {
+            color: #fff;
+        }
+
+        .tab-link.active {
+            color: #fff;
+            font-weight: 700;
+        }
+
+        .tab-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+
+
+        /* Pointer events for layout content */
+        .profile-layout>* {
+            pointer-events: auto;
+        }
+
+
+
+        /* 2. Left Column: User Card */
+        .profile-card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            padding: 40px 30px 30px;
+            text-align: center;
+            position: relative;
+            overflow: visible;
+        }
+
+        .profile-avatar-lg {
+            width: 150px;
+            height: 150px;
+            background: #fff;
+            border-radius: 50%;
+            padding: 5px;
+            /* Creates a white border effect */
+            position: absolute;
+            top: -75px;
+            left: 50%;
+            transform: translateX(-50%);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            position: absolute;
+            /* For overlay positioning relative to this if needed, but top is absolute. Let's adjust */
+        }
+
+        /* Fix for absolute positioning context */
+        .profile-avatar-lg {
+            position: absolute;
+        }
+
+        .avatar-img {
+            width: 100%;
+            height: 100%;
+            background: var(--secondary-color);
+            background-size: cover;
+            background-position: center;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3.5rem;
+            color: white;
+            font-weight: 600;
+            overflow: hidden;
+            /* Ensure image stays in circle */
+        }
+
+        .avatar-overlay {
+            position: absolute;
+            top: 5px;
+            /* Match padding offset */
+            left: 5px;
+            width: calc(100% - 10px);
+            height: calc(100% - 10px);
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            opacity: 0;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .profile-avatar-lg:hover .avatar-overlay {
+            opacity: 1;
+        }
+
+        .profile-card h2 {
+            margin-top: 60px;
+            /* Space for the floating avatar */
+            margin-bottom: 5px;
+            color: var(--title-color);
+            font-size: 1.8rem;
+        }
+
+        .role-badge {
+            background: rgba(0, 168, 255, 0.1);
+            color: var(--secondary-color);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+
+        /* If admin, badge color change via JS or simple class override */
+        .role-badge.admin {
+            background: rgba(255, 204, 0, 0.15);
+            color: #d4a000;
+        }
+
+        .profile-stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 25px 0;
+            padding: 20px 0;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        body.dark-mode .profile-stats {
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Stats hidden rule removed for dynamic stats implementation */
+
+        .stat-item h3 {
+            font-size: 1.5rem;
+            color: var(--title-color);
+            margin-bottom: 5px;
+        }
+
+        .stat-item p {
+            font-size: 0.85rem;
+            color: #888;
+        }
+
+        .profile-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .btn-profile {
+            flex: 1;
+            padding: 12px;
+            border-radius: 50px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 5px 15px rgba(0, 61, 128, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid #ddd;
+            color: var(--text-color);
+        }
+
+        .btn-outline:hover {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+
+
+
+        /* 3. Right Column: Tabs Content */
+        .profile-content {
+            padding-top: 20px;
+        }
+
+
+
+        .tab-pane {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .tab-pane.active {
+            display: block;
+        }
+
+        /* --- ACADEMIC GRADES & GAMIFICATION --- */
+        .academic-item {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .academic-item:hover {
+            transform: translateX(5px);
+        }
+
+        /* 0 - 10.9 (Red) */
+        .grade-red {
+            border-left: 4px solid #ff4757 !important;
+            background: rgba(255, 71, 87, 0.05) !important;
+        }
+
+        .badge-red {
+            background: #ffe0e3 !important;
+            color: #ff4757 !important;
+        }
+
+        /* 11 - 15.9 (Yellow/Orange) */
+        .grade-yellow {
+            border-left: 4px solid #ffa502 !important;
+            background: rgba(255, 165, 2, 0.05) !important;
+        }
+
+        .badge-yellow {
+            background: #fff0d1 !important;
+            color: #ffa502 !important;
+        }
+
+        /* 16 - 19.9 (Green) */
+        .grade-green {
+            border-left: 4px solid #2ed573 !important;
+            background: rgba(46, 213, 115, 0.05) !important;
+        }
+
+        .badge-green {
+            background: #dbfbfb !important;
+            /* light teal */
+            color: #2ed573 !important;
+        }
+
+        /* 20.0 (Gold/Perfect) - GAMIFIED */
+        .grade-perfect {
+            border-left: 4px solid #FFD700 !important;
+            background: linear-gradient(90deg, rgba(255, 215, 0, 0.15) 0%, rgba(255, 215, 0, 0.02) 100%) !important;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.2);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+        }
+
+        .grade-perfect::before {
+            content: '\f091';
+            /* fa-trophy */
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 2rem;
+            color: rgba(255, 215, 0, 0.2);
+            z-index: 0;
+            transform: translateY(-50%) rotate(-15deg);
+        }
+
+        /* Shine Effect */
+        .grade-perfect::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+            animation: shine 3s infinite;
+            pointer-events: none;
+        }
+
+        .badge-perfect {
+            background: linear-gradient(135deg, #FFD700, #FDB931) !important;
+            color: #000 !important;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            font-weight: 800 !important;
+        }
+
+        @keyframes shine {
+            0% {
+                left: -100%;
+            }
+
+            20% {
+                left: 100%;
+            }
+
+            100% {
+                left: 100%;
+            }
+        }
+
+        .content-card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .content-card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 25px;
+            color: var(--title-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .content-card h3 i {
+            color: var(--secondary-color);
+        }
+
+        /* Form Grid */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            color: #888;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .form-group div {
+            font-size: 1rem;
+            color: var(--title-color);
+            font-weight: 500;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+            /* Minimalist line style */
+            padding-bottom: 8px;
+        }
+
+
+
+        .settings-list .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .settings-list .setting-item:last-child {
+            border-bottom: none;
+        }
+
+
+
+        .setting-info h4 {
+            font-size: 1rem;
+            margin-bottom: 5px;
+            color: var(--title-color);
+        }
+
+        .setting-info p {
+            font-size: 0.85rem;
+            color: #888;
+        }
+
+        /* Toggle Switch */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 26px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked+.slider {
+            background-color: var(--secondary-color);
+        }
+
+        input:checked+.slider:before {
+            transform: translateX(24px);
+        }
+
+
+        /* Theme Toggle (Header) */
+        .header-icon-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.2rem;
+            color: #fff;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+        }
+
+        .header-icon-btn:hover {
+            background-color: transparent;
+            transform: scale(1.1);
+            /* Slightly larger scale since no bg */
+        }
+
+        /* Adjust theme-toggle specific positioning if needed, but class handles base */
+        .theme-toggle {
+            position: absolute;
+            top: 30px;
+            right: 40px;
+            /* Override display from header-icon-btn if needed, but flex is good */
+        }
+
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .profile-layout {
+                grid-template-columns: 1fr;
+                margin-top: -100px;
+            }
+
+            .profile-card {
+                margin-bottom: 20px;
+            }
+
+            .tabs-nav {
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 70px;
+                padding: 15px 10px;
+            }
+
+            .brand span,
+            .user-info,
+            .menu-items span,
+            .logout span {
+                display: none;
+            }
+
+            .main-content {
+                margin-left: 70px;
+            }
+
+            .user-profile {
+                padding: 0;
+                background: none;
+                justify-content: center;
+            }
+
+            .menu-items a {
+                justify-content: center;
+            }
+
+            .profile-layout {
+                padding: 0 20px;
+            }
+        }
+
+        /* Academic Item Colors */
+        .academic-item h4 {
+            color: var(--title-color);
+        }
+
+        .academic-item p {
+            color: #666;
+        }
+
+
+
+        /* Prevent body scroll when modal is open */
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        /* --- CROPPER MODAL --- */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(5px);
+            /* Flex centering handled via class */
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.show {
+            display: flex !important;
+        }
+
+        #crop-modal .modal-content {
+            background-color: var(--card-bg);
+            /* margin handled by flex */
+            padding: 20px;
+            border-radius: var(--border-radius);
+            width: 95%;
+            max-width: 500px;
+            /* Small for Avatar */
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6);
+            animation: fadeIn 0.3s;
+            display: flex;
+            flex-direction: column;
+            max-height: 90vh;
+        }
+
+        #crop-modal.wide-modal .modal-content {
+            width: 95vw !important;
+            max-width: 1400px !important;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            padding-bottom: 10px;
+            flex-shrink: 0;
+        }
+
+        .modal-header h3 {
+            color: var(--title-color);
+        }
+
+        .img-container {
+            height: 60vh;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+            background: #222;
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .img-container img {
+            max-width: 100%;
+            max-height: 100%;
+            display: block;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            flex-shrink: 0;
+        }
+
+        .modal-footer button {
+            cursor: pointer;
+        }
+
+
+
+        /* Edit Styles */
+        .editable-field {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-bottom: 5px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+            /* Replicates the old div style */
+        }
+
+
+
+        .edit-icon {
+            color: var(--secondary-color);
+            cursor: pointer;
+            opacity: 0;
+            /* Hidden by default */
+            pointer-events: none;
+            /* Non-clickable when hidden */
+            font-size: 0.9rem;
+            transition: opacity 0.3s ease, transform 0.2s;
+            margin-left: 10px;
+        }
+
+        /* Show when body has is-editing class */
+        body.is-editing .edit-icon {
+            opacity: 0.7;
+            pointer-events: auto;
+        }
+
+        body.is-editing .edit-icon:hover {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+
+        /* Double Blink Animation */
+        @keyframes doubleBlink {
+            0% {
+                transform: scale(1);
+                opacity: 0.7;
+            }
+
+            25% {
+                transform: scale(1.4);
+                opacity: 1;
+                color: var(--primary-color);
+            }
+
+            50% {
+                transform: scale(1);
+                opacity: 0.7;
+            }
+
+            75% {
+                transform: scale(1.4);
+                opacity: 1;
+                color: var(--primary-color);
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 0.7;
+            }
+        }
+
+        .edit-icon.blink {
+            animation: doubleBlink 0.6s ease-in-out;
+        }
+
+        .edit-input,
+        .custom-select {
+            width: 100%;
+            padding: 8px 10px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            background: rgba(255, 255, 255, 0.5);
+            color: var(--text-color);
+            font-family: inherit;
+            outline: none;
+        }
+
+
+
+        .edit-actions {
+            display: flex;
+            gap: 5px;
+            margin-left: 5px;
+        }
+
+        .save-btn {
+            color: #2ecc71;
+            cursor: pointer;
+        }
+
+        .cancel-btn {
+            color: #e74c3c;
+            cursor: pointer;
+        }
+
+        .favicon-icon {
+            width: 16px;
+            height: 16px;
+            object-fit: contain;
+            border-radius: 2px;
+        }
+
+        .link-text-truncate {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: block;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .link-display {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-right: 10px;
+            color: var(--secondary-color);
+            text-decoration: none;
+        }
+
+        /* Link Edit Mode */
+        .link-edit-container {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="sidebar">
+        <!-- Sidebar content omitted for brevity, logic remains same -->
+        <div class="brand">
+            <i class="fas fa-graduation-cap"></i> <span>Ceind</span>
+        </div>
+
+        <div class="user-profile clickable-profile" onclick="window.location.href='profile.html'">
+            <div class="user-avatar-sm">--</div>
+            <div class="user-info">
+                <h4 id="sidebar-user-name">Cargando...</h4>
+                <span id="sidebar-user-subtitle">...</span>
+            </div>
+        </div>
+
+        <ul class="menu-items">
+            <li><a href="institution.html"><i class="fas fa-university"></i> <span
+                        data-i18n="menu_institution"></span></a>
+            </li>
+            <li><a href="activity.html"><i class="fas fa-globe"></i> <span data-i18n="menu_activity"></span></a></li>
+
+            <li id="student-link"><a href="dashboard.html"><i class="fas fa-book"></i>
+                    <span data-i18n="menu_courses"></span></a></li>
+            <li id="admin-link" style="display: none;"><a href="admin_panel.html"><i class="fas fa-th-large"></i>
+                    <span data-i18n="menu_panel"></span></a></li>
+
+            <li><a href="schedule.html"><i class="fas fa-calendar-alt"></i> <span data-i18n="menu_schedule"></span></a>
+            </li>
+            <li><a href="grades.html"><i class="fas fa-chart-line"></i> <span data-i18n="menu_grades"></span></a></li>
+            <li><a href="messages.html"><i class="fas fa-paper-plane"></i> <span data-i18n="menu_messages"></span> <span
+                        id="msg-counter-badge"
+                        style="display:none; background:red; color:white; padding:2px 6px; border-radius:10px; font-size:0.7rem; margin-left:auto;">0</span></a>
+            </li>
+        </ul>
+
+        <ul class="menu-items logout">
+            <li><a href="index.html" onclick="localStorage.removeItem('isLoggedIn');"><i
+                        class="fas fa-sign-out-alt"></i> <span data-i18n="menu_logout"></span></a></li>
+        </ul>
+    </nav>
+
+    <main class="main-content">
+        <!-- 1. Cover Area -->
+        <div class="profile-cover" id="profile-cover">
+            <button class="edit-cover-btn">
+                <i class="fas fa-camera"></i> Editar Portada
+            </button>
+            <input type="file" id="cover-upload" hidden accept="image/*">
+
+            <button id="theme-toggle" class="header-icon-btn theme-toggle" title="Cambiar tema">
+                <i class="fas fa-moon"></i>
+            </button>
+        </div>
+
+        <div class="profile-layout">
+            <!-- 2. Left Column: Floating User Card -->
+            <aside class="left-col">
+                <div class="profile-card">
+                    <div class="profile-avatar-lg">
+                        <div class="avatar-img" id="profile-avatar-display">--</div>
+                        <div class="avatar-overlay">
+                            <i class="fas fa-camera"></i>
+                        </div>
+                        <!-- Remove Avatar Button (Only visible if avatar exists - JS toggles this) -->
+                        <div id="remove-avatar-btn" onclick="removeAvatar()"
+                            style="position: absolute; bottom: 0; right: 0; background: #e74c3c; color: white; width: 30px; height: 30px; border-radius: 50%; display: none; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.2); z-index: 10;"
+                            title="Eliminar foto">
+                            <i class="fas fa-trash-alt" style="font-size: 0.8rem;"></i>
+                        </div>
+                        <input type="file" id="avatar-upload" hidden accept="image/*">
+                    </div>
+                    <h2 id="profile-name-main">Cargando...</h2>
+                    <span class="role-badge" id="profile-role-badge">...</span>
+
+                    <div class="profile-stats">
+                        <div class="stat-item">
+                            <h3 id="stat-value-1">0</h3>
+                            <p id="stat-label-1">Cursos</p>
+                        </div>
+                        <div class="stat-item">
+                            <h3 id="stat-value-2">0</h3>
+                            <p id="stat-label-2">Certificados</p>
+                        </div>
+                        <div class="stat-item">
+                            <h3 id="stat-value-3">-</h3>
+                            <p id="stat-label-3">Promedio</p>
+                        </div>
+                    </div>
+
+                    <div class="profile-actions">
+                        <button class="btn-profile btn-primary" id="edit-mode-toggle"
+                            onclick="toggleEditMode()">Editar</button>
+                        <button class="btn-profile btn-outline" id="share-profile-btn" onclick="copyProfileLink()"
+                            title="Copiar enlace"><i class="fas fa-share-alt"></i></button>
+                    </div>
+                </div>
+
+                <div class="content-card" style="margin-top: 30px; text-align: left;">
+                    <h3 style="font-size: 1rem;"><i class="fas fa-link"></i> Enlaces</h3>
+                    <div class="links-container" style="display:flex; flex-direction:column; gap:10px;">
+                        <!-- Slot 1 -->
+                        <div class="editable-field" id="link-slot-1" data-type="link">
+                            <a href="#" target="_blank" class="link-display">
+                                <i class="fas fa-plus"></i> <span class="link-text-truncate">Agregar enlace</span>
+                            </a>
+                            <span class="url-hidden" style="display:none;"></span>
+                            <i class="fas fa-pencil-alt edit-icon" onclick="editField('link-slot-1')"></i>
+                        </div>
+                        <!-- Slot 2 -->
+                        <div class="editable-field" id="link-slot-2" data-type="link">
+                            <a href="#" target="_blank" class="link-display">
+                                <i class="fas fa-plus"></i> <span class="link-text-truncate">Agregar enlace</span>
+                            </a>
+                            <span class="url-hidden" style="display:none;"></span>
+                            <i class="fas fa-pencil-alt edit-icon" onclick="editField('link-slot-2')"></i>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- 3. Right Column: Tabs -->
+            <section class="profile-content">
+                <div class="tabs-nav">
+                    <div class="tab-link active" onclick="openTab(event, 'personal')" data-i18n="tab_personal"></div>
+                    <div class="tab-link" onclick="openTab(event, 'academico')" data-i18n="tab_academic"></div>
+                    <div class="tab-link" onclick="openTab(event, 'config')" data-i18n="tab_settings"></div>
+                </div>
+
+                <!-- Tab 1: Personal -->
+                <div id="personal" class="tab-pane active">
+                    <!-- Información Básica -->
+                    <div class="content-card">
+                        <h3 data-i18n="basic_info"><i class="fas fa-user-circle"></i> Información Básica</h3>
+                        <div class="info-grid">
+                            <div class="form-group">
+                                <label>Nombre Completo</label>
+                                <div id="profile-fullname" style="color:var(--title-color); font-weight: 500;">
+                                    Cargando...</div>
+                            </div>
+                            <div class="form-group">
+                                <label>Dirección de correo electrónico</label>
+                                <div id="profile-email">...</div>
+                            </div>
+                            <div class="form-group" id="student-id-field">
+                                <label>ID de estudiante</label>
+                                <div id="profile-student-id">...</div>
+                            </div>
+                            <div class="form-group">
+                                <label>Contraseña</label>
+                                <div><a href="forgot_password.html" target="_blank"
+                                        style="color:var(--secondary-color);">Cambiar contraseña</a></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Información Adicional -->
+                    <div class="content-card">
+                        <h3 data-i18n="additional_info"><i class="fas fa-id-card"></i> Información adicional</h3>
+                        <div class="info-grid">
+                            <div class="form-group">
+                                <label>Sexo</label>
+                                <div class="editable-field" id="field-sex" data-type="select"
+                                    data-options="Masculino,Femenino">
+                                    <span>Masculino</span> <i class="fas fa-pencil-alt edit-icon"
+                                        onclick="editField('field-sex')"></i>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Nombre adicional</label>
+                                <div class="editable-field" id="field-nickname" data-type="text">
+                                    <span style="color:#888;">Agregar nombre adicional</span> <i
+                                        class="fas fa-pencil-alt edit-icon" onclick="editField('field-nickname')"></i>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Fecha de nacimiento</label>
+                                <div class="editable-field" id="field-dob" data-type="date">
+                                    <span style="color:#888;">Agregar fecha de nacimiento</span> <i
+                                        class="fas fa-pencil-alt edit-icon" onclick="editField('field-dob')"></i>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Nivel de educación</label>
+                                <div class="editable-field" id="field-education" data-type="select"
+                                    data-options="Primaria,Secundaria,Preparatoria,Técnico,Superior,Universitario,Maestría,Doctorado">
+                                    <span style="color:#888;">Agregar nivel de educación</span> <i
+                                        class="fas fa-pencil-alt edit-icon" onclick="editField('field-education')"></i>
+                                </div>
+                            </div>
+                            <div class="form-group" style="grid-column: 1 / -1;">
+                                <label>Sitio web</label>
+                                <div class="editable-field" id="field-website" data-type="link">
+                                    <a href="#" target="_blank" class="link-display">
+                                        <i class="fas fa-globe"></i> <span class="link-text-truncate">Agregar sitio
+                                            web</span>
+                                    </a>
+                                    <span class="url-hidden" style="display:none;"></span>
+                                    <i class="fas fa-pencil-alt edit-icon" onclick="editField('field-website')"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Información de Contacto -->
+                    <div class="content-card">
+                        <h3 data-i18n="contact_info"><i class="fas fa-address-book"></i> Información de contacto</h3>
+                        <div class="info-grid">
+                            <div class="form-group" style="grid-column: span 2;">
+                                <label>Dirección postal</label>
+                                <div class="editable-field" id="field-address" data-type="text">
+                                    <span style="color:var(--secondary-color);">Agregar dirección</span> <i
+                                        class="fas fa-pencil-alt edit-icon" onclick="editField('field-address')"></i>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Número de teléfono</label>
+                                <div class="editable-field" id="field-phone" data-type="tel">
+                                    <span style="color:var(--secondary-color);">Agregar teléfono</span> <i
+                                        class="fas fa-pencil-alt edit-icon" onclick="editField('field-phone')"></i>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Número de fax laboral</label>
+                                <div class="editable-field" id="field-fax" data-type="text">
+                                    <span style="color:#888;">Agregar número de fax laboral</span> <i
+                                        class="fas fa-pencil-alt edit-icon" onclick="editField('field-fax')"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Información Laboral -->
+                    <div class="content-card">
+                        <h3 data-i18n="work_info"><i class="fas fa-briefcase"></i> Información laboral</h3>
+                        <div class="info-grid">
+                            <div class="form-group">
+                                <label>Empresa</label>
+                                <div class="editable-field" id="field-company" data-type="text">
+                                    <span style="color:#888;">Agregar empresa</span> <i
+                                        class="fas fa-pencil-alt edit-icon" onclick="editField('field-company')"></i>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Cargo</label>
+                                <div class="editable-field" id="field-role" data-type="text">
+                                    <span style="color:#888;">Agregar título del puesto</span> <i
+                                        class="fas fa-pencil-alt edit-icon" onclick="editField('field-role')"></i>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Departamento</label>
+                                <div class="editable-field" id="field-department" data-type="select"
+                                    data-options="Administración,Recursos Humanos,Tecnologías de la Información,Marketing,Ventas,Finanzas,Operaciones">
+                                    <span style="color:#888;">Agregar departamento</span> <i
+                                        class="fas fa-pencil-alt edit-icon" onclick="editField('field-department')"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab 2: Académico -->
+                <div id="academico" class="tab-pane">
+                    <div class="content-card">
+                        <h3><i class="fas fa-graduation-cap"></i> Historial Académico</h3>
+                        <!-- Curso 1: Inglés (En Progreso) -->
+                        <div class="academic-item grade-perfect"
+                            style="padding: 15px; border-radius: 10px; margin-bottom: 15px; position: relative;">
+                            <h4 style="margin-bottom: 5px;">Inglés desde cero</h4>
+                            <p style="font-size: 0.9rem; opacity: 0.8;">Completado</p>
+                            <span class="badge-perfect"
+                                style="display:inline-block; margin-top: 5px; padding: 2px 10px; border-radius: 10px; font-size: 0.8rem;">Avance:
+                                20.0%</span>
+                        </div>
+
+                        <!-- Curso 2: China (Nuevo) -->
+                        <div style="background: rgba(0,0,0,0.02); padding: 15px; border-radius: 10px; margin-bottom: 15px; border-left: 4px solid var(--secondary-color);"
+                            class="academic-item">
+                            <h4 style="margin-bottom: 5px;">Importaciones desde China</h4>
+                            <p style="font-size: 0.9rem; opacity: 0.8;">Nuevo</p>
+                            <span
+                                style="display:inline-block; margin-top: 5px; background: rgba(0, 168, 255, 0.1); color: var(--secondary-color); padding: 2px 10px; border-radius: 10px; font-size: 0.8rem; font-weight:600;">Avance:
+                                0%</span>
+                        </div>
+
+                        <!-- Curso 3: USA (Nuevo) -->
+                        <div style="background: rgba(0,0,0,0.02); padding: 15px; border-radius: 10px; margin-bottom: 15px; border-left: 4px solid var(--secondary-color);"
+                            class="academic-item">
+                            <h4 style="margin-bottom: 5px;">Importaciones desde USA</h4>
+                            <p style="font-size: 0.9rem; opacity: 0.8;">Nuevo</p>
+                            <span
+                                style="display:inline-block; margin-top: 5px; background: rgba(0, 168, 255, 0.1); color: var(--secondary-color); padding: 2px 10px; border-radius: 10px; font-size: 0.8rem; font-weight:600;">Avance:
+                                0%</span>
+                        </div>
+
+                        <!-- Curso 4: Jr (Nuevo) -->
+                        <div style="background: rgba(0,0,0,0.02); padding: 15px; border-radius: 10px; border-left: 4px solid var(--secondary-color);"
+                            class="academic-item">
+                            <h4 style="margin-bottom: 5px;">Importador Jr.</h4>
+                            <p style="font-size: 0.9rem; opacity: 0.8;">Nuevo</p>
+                            <span
+                                style="display:inline-block; margin-top: 5px; background: rgba(0, 168, 255, 0.1); color: var(--secondary-color); padding: 2px 10px; border-radius: 10px; font-size: 0.8rem; font-weight:600;">Avance:
+                                0%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab 3: Configuración -->
+                <div id="config" class="tab-pane">
+                    <div class="content-card">
+                        <h3><i class="fas fa-cog"></i> Configuración del sistema</h3>
+                        <div class="info-grid">
+                            <div class="form-group"
+                                style="grid-column: 1 / -1; border-bottom: 1px solid rgba(0,0,0,0.05); padding-bottom: 15px; margin-bottom: 15px;">
+                                <label style="margin-bottom: 10px;">Idioma</label>
+                                <select id="language-select" class="custom-select"
+                                    onchange="changeLanguage(this.value)">
+                                    <option value="es">Español (España)</option>
+                                    <option value="en">English (US)</option>
+                                </select>
+                            </div>
+
+                            <!-- REMOVED PRIVACY SETTINGS -->
+
+                            <div class="form-group" style="grid-column: 1 / -1;">
+                                <label style="margin-bottom: 10px;">Ajustes de notificaciones generales</label>
+                                <div class="setting-item" style="border:none;">
+                                    <div class="setting-info">
+                                        <h4>Silenciar notificaciones de Actividad</h4>
+                                        <p>No recibirás alertas de nuevas publicaciones en la pestaña Actividad.</p>
+                                    </div>
+                                    <label class="switch" style="transform: translateY(18px);">
+                                        <input type="checkbox" id="mute-activity-toggle"
+                                            onchange="toggleMuteActivity()">
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+        </div>
+    </main>
+
+    <!-- Crop Modal -->
+    <div id="crop-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Recortar Imagen</h3>
+                <span style="cursor:pointer; font-size:1.5rem; color:var(--text-color);"
+                    onclick="closeModal()">&times;</span>
+            </div>
+            <div class="img-container">
+                <img id="image-to-crop" src="">
+            </div>
+            <div class="modal-footer">
+                <button class="btn-profile btn-outline" onclick="closeModal()">Cancelar</button>
+                <button class="btn-profile btn-primary" id="btn-crop">Guardar Recorte</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Liquid Gold SVG Filter (Hidden) -->
+    <svg xmlns="www.w3.org" style="display:none;">
+        <defs>
+            <filter id="gold-liquid">
+                <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
+                <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 20 -10"
+                    result="goo" />
+                <feSpecularLighting in="goo" surfaceScale="5" specularConstant="0.8" specularExponent="35"
+                    lighting-color="#ffe680" result="specular">
+                    <fePointLight x="50%" y="-50" z="150" />
+                </feSpecularLighting>
+                <feComposite in="specular" in2="goo" operator="in" result="specularOut" />
+                <feComposite in="goo" in2="specularOut" operator="arithmetic" k1="0" k2="1" k3="0.7" k4="0" />
+            </filter>
+        </defs>
+    </svg>
+
+    <!-- Global Translations -->
+    <script src="js/translations.js"></script>
+
+    <script>
+        // Dark Mode Logic handled by js/theme.js
+
+
+        // --- Tabs Logic ---
+        function openTab(evt, tabName) {
+            // Hide all tabs
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tab-pane");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+                tabcontent[i].classList.remove("active");
+            }
+
+            // Deactivate all links
+            tablinks = document.getElementsByClassName("tab-link");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+
+            // Show current tab and activate link
+            document.getElementById(tabName).style.display = "block";
+            // Timeout to allow display:block to apply before opacity transition
+            setTimeout(() => {
+                document.getElementById(tabName).classList.add("active");
+            }, 10);
+
+            evt.currentTarget.className += " active";
+        }
+
+        // --- Admin Authority Logic REMOVED (Handled by profile-data.js) ---
+
+        // --- Notification Settings Logic ---
+        function toggleMuteActivity() {
+            const toggle = document.getElementById('mute-activity-toggle');
+            const isMuted = toggle.checked;
+            localStorage.setItem('mute_activity', isMuted);
+            // Optional: Show a small toast/feedback
+            console.log('Notifications muted:', isMuted);
+        }
+
+        // Initialize Toggle State
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedMute = localStorage.getItem('mute_activity') === 'true';
+            const toggle = document.getElementById('mute-activity-toggle');
+            if (toggle) {
+                toggle.checked = savedMute;
+            }
+        });
+
+        // --- Image Logic Removed (Superseded by logic at bottom of file) ---
+        // --- SHARE BUTTON LOGIC ---
+        function copyProfileLink() {
+            // Use current URL
+            const url = window.location.href;
+
+            navigator.clipboard.writeText(url).then(() => {
+                const btn = document.getElementById('share-profile-btn');
+                const icon = btn.querySelector('i');
+
+                // Visual Feedback
+                const originalIcon = 'fa-share-alt';
+                icon.className = 'fas fa-check';
+                btn.style.color = '#2ecc71'; // Green color
+                btn.style.borderColor = '#2ecc71';
+
+                setTimeout(() => {
+                    icon.className = `fas ${originalIcon}`;
+                    btn.style.color = '';
+                    btn.style.borderColor = '';
+                }, 2000);
+            }).catch(err => {
+                console.error('Error al copiar: ', err);
+            });
+        }
+
+        // --- EDIT MODE TOGGLE ---
+        function toggleEditMode() {
+            const body = document.body;
+            const btn = document.getElementById('edit-mode-toggle');
+
+            body.classList.toggle('is-editing');
+            const isEditing = body.classList.contains('is-editing');
+
+            if (isEditing) {
+                btn.innerText = "Listo";
+                // Visual feedback for button
+                btn.style.backgroundColor = "#2ecc71"; // Green for check/done
+                btn.style.borderColor = "#2ecc71";
+
+                // Trigger Blink Animation
+                const icons = document.querySelectorAll('.edit-icon');
+                icons.forEach(icon => {
+                    // Reset animation if needed
+                    icon.classList.remove('blink');
+                    void icon.offsetWidth; // Trigger reflow
+                    icon.classList.add('blink');
+                    // Remove class after animation to clean up
+                    setTimeout(() => icon.classList.remove('blink'), 600);
+                });
+            } else {
+                btn.innerText = "Editar";
+                btn.style.backgroundColor = ""; // Reset to default CSS
+                btn.style.borderColor = "";
+
+                // Close any open edits? Optional. Let's leave them open if user forgot.
+            }
+        }
+
+        // --- PROFILE EDIT LOGIC ---
+        function editField(fieldId) {
+            const container = document.getElementById(fieldId);
+            if (container.classList.contains('editing')) return; // Already editing
+
+            container.classList.add('editing');
+            const type = container.dataset.type;
+            const originalContent = container.innerHTML; // Backup
+            container.dataset.original = originalContent;
+
+            // Get current text value (clean)
+            let currentValue = "";
+            let urlValue = ""; // for link type
+
+            // Try to get from LocalStorage first for better fidelity
+            const saved = localStorage.getItem(`profile_${fieldId}`);
+            if (saved && type === 'link') {
+                try {
+                    const data = JSON.parse(saved);
+                    urlValue = data.url;
+                    currentValue = data.name;
+
+                    // If we previously saved name as URL (legacy) or if name matches URL, clear it for UX
+                    if (currentValue === urlValue) {
+                        currentValue = "";
+                    }
+                } catch (e) { }
+            } else if (type === 'link') {
+                // DOM Fallback
+                const linkEl = container.querySelector('a');
+                const hiddenUrl = container.querySelector('.url-hidden');
+
+                // For DOM, innerText of link might include the URL if that's what is displayed
+                const textSpan = container.querySelector('.link-text-truncate');
+                currentValue = textSpan ? textSpan.innerText.trim() : (linkEl ? linkEl.innerText.trim() : "");
+                urlValue = hiddenUrl ? hiddenUrl.innerText.trim() : (linkEl ? linkEl.href : "");
+
+                if (currentValue === urlValue) currentValue = "";
+                if (currentValue.includes("Agregar") || currentValue.includes("Add")) currentValue = ""; // Clear placeholder
+                if (urlValue && (urlValue === "#" || urlValue.endsWith("/#"))) urlValue = "";
+            } else {
+                // For text/select, grab the text inside the span (ignoring the icon)
+                const span = container.querySelector('span');
+                currentValue = span ? span.innerText.trim() : "";
+                if (currentValue.includes("Agregar")) currentValue = ""; // Clear placeholder
+            }
+
+            container.innerHTML = ''; // Clear for input
+
+            if (type === 'select') {
+                const options = container.dataset.options.split(',');
+                let selectHtml = `<select class="custom-select" id="input-${fieldId}">`;
+                options.forEach(opt => {
+                    const isSel = opt === currentValue ? 'selected' : '';
+                    selectHtml += `<option value="${opt}" ${isSel}>${opt}</option>`;
+                });
+                selectHtml += `</select>`;
+                container.innerHTML = selectHtml;
+            } else if (type === 'link') {
+                container.innerHTML = `
+                    <div class="link-edit-container">
+                        <input type="text" class="edit-input" id="input-url-${fieldId}" value="${urlValue}" placeholder="URL (https://...)">
+                        <input type="text" class="edit-input" id="input-name-${fieldId}" value="${currentValue}" placeholder="Nombre para mostrar">
+                    </div>`;
+            } else if (type === 'date') {
+                container.innerHTML = `<input type="date" class="edit-input" id="input-${fieldId}" value="${currentValue}">`;
+            } else if (type === 'tel') {
+                container.innerHTML = `<input type="tel" class="edit-input" id="input-${fieldId}" value="${currentValue}">`;
+                // Initialize intl-tel-input
+                setTimeout(() => {
+                    const input = document.querySelector(`#input-${fieldId}`);
+                    if (input) {
+                        window.iti = window.intlTelInput(input, {
+                            utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@23.0.1/build/js/utils.js",
+                            separateDialCode: true, // Show flag separate
+                            preferredCountries: ["pe", "us", "mx", "es"],
+                            initialCountry: "auto",
+                            geoIpLookup: callback => {
+                                fetch("https://ipapi.co/json")
+                                    .then(res => res.json())
+                                    .then(data => callback(data.country_code))
+                                    .catch(() => callback("pe"));
+                            },
+                            // Enable Search Box (Lupa)
+                            countrySearch: true,
+                            i18n: {
+                                searchPlaceholder: "Buscar país...",
+                                noCountryFound: "No se encontraron países"
+                            }
+                        });
+                    }
+                }, 0);
+            } else { // text
+                container.innerHTML = `<input type="text" class="edit-input" id="input-${fieldId}" value="${currentValue}">`;
+            }
+
+            // Append Actions
+            const actions = document.createElement('div');
+            actions.className = 'edit-actions';
+            actions.innerHTML = `
+                <i class="fas fa-check save-btn" onclick="saveField('${fieldId}')"></i>
+                <i class="fas fa-times cancel-btn" onclick="cancelEdit('${fieldId}')"></i>
+            `;
+
+            // For link, append to container directly, for others append after input
+            if (type === 'link') {
+                // Actions need to be outside the flex column maybe, or inside. Let's put inside
+                container.appendChild(actions);
+            } else {
+                container.appendChild(actions);
+                // Need flex row for non-link types
+                container.style.alignItems = 'center';
+            }
+        }
+
+        function cancelEdit(fieldId) {
+            const container = document.getElementById(fieldId);
+            if (!container) return;
+            container.innerHTML = container.dataset.original;
+            container.classList.remove('editing');
+        }
+
+        function getFaviconImg(url) {
+            if (!url) return '<i class="fas fa-link"></i>';
+            try {
+                const domain = new URL(url).hostname;
+                return `<img src="https://www.google.com/s2/favicons?domain=${domain}&sz=32" class="favicon-icon">`;
+            } catch (e) {
+                return '<i class="fas fa-globe"></i>';
+            }
+        }
+
+        function saveField(fieldId) {
+            const container = document.getElementById(fieldId);
+            const type = container.dataset.type;
+            let displayValue = "";
+            let storageValue = ""; // Value to save to DB/Local
+
+            if (type === 'select' || type === 'text' || type === 'date') {
+                const input = document.getElementById(`input-${fieldId}`);
+                displayValue = input.value;
+                storageValue = displayValue;
+            } else if (type === 'tel') {
+                if (window.iti) {
+                    if (window.iti.isValidNumber()) {
+                        // Get format like "999 999 999" (depends on utils)
+                        // INTERNATIONAL usually adds code +51 ...
+                        // If user wants specific spacing, the NATIONAL format might be better or RFC3966.
+                        // Let's try INTERNATIONAL for now as it includes country code which user asked for context
+                        // "reconosca de que pais es ... y respete espacios"
+                        displayValue = window.iti.getNumber(intlTelInputUtils.numberFormat.INTERNATIONAL);
+                        storageValue = displayValue;
+                    } else {
+                        // If invalid, just save what user typed but maybe warn? 
+                        // For now fallback to input value
+                        const input = document.getElementById(`input-${fieldId}`);
+                        displayValue = input.value;
+                        storageValue = displayValue;
+                    }
+                    window.iti.destroy(); // Cleanup
+                    window.iti = null;
+                }
+            } else if (type === 'link') {
+                const urlIn = document.getElementById(`input-url-${fieldId}`);
+                const nameIn = document.getElementById(`input-name-${fieldId}`);
+                const url = urlIn.value;
+                const name = nameIn.value; // Save exact value (can be empty)
+
+                // Icon detection (Favicon)
+                const iconHtml = url ? getFaviconImg(url) : '<i class="fas fa-plus"></i>';
+                // Display text uses name OR url
+                const displayText = url ? (name || url) : "Agregar enlace";
+
+                displayValue = `<a href="${url}" target="_blank" class="link-display">
+                                    ${iconHtml} <span class="link-text-truncate">${displayText}</span>
+                                </a>
+                                <span class="url-hidden" style="display:none;">${url}</span>`;
+                // Store {url, name} where name might be ""
+                storageValue = JSON.stringify({ url, name });
+            }
+
+            // Validation (optional)
+            if (!displayValue && type !== 'link') {
+                displayValue = `<span style="color:#888;">Agregar información</span>`;
+            } else if (type !== 'link') {
+                displayValue = `<span>${displayValue}</span>`;
+            }
+
+            // RESTORE HTML
+            const iconHtml = `<i class="fas fa-pencil-alt edit-icon" onclick="editField('${fieldId}')"></i>`;
+            container.innerHTML = displayValue + iconHtml;
+            container.classList.remove('editing');
+
+            // SAVE Persistence
+            localStorage.setItem(`profile_${fieldId}`, storageValue);
+        }
+
+        // --- Liquid Gold Logic (Ported from xd2.html) ---
+        function createGoldRain() {
+            const perfectCards = document.querySelectorAll('.grade-perfect');
+            perfectCards.forEach(card => {
+                // Determine if canvas already exists
+                let canvas = card.querySelector('canvas.liquid-canvas');
+                if (!canvas) {
+                    // Create Container for Filter Application
+                    const container = document.createElement('div');
+                    container.style.position = 'absolute';
+                    container.style.top = '0';
+                    container.style.left = '0';
+                    container.style.width = '100%';
+                    container.style.height = '100%';
+                    container.style.pointerEvents = 'none';
+                    container.style.zIndex = '0'; // Behind text
+                    container.style.overflow = 'hidden';
+                    container.style.borderRadius = '10px';
+                    // Apply the goo filter to the container
+                    container.style.filter = "url('#gold-liquid')";
+
+                    canvas = document.createElement('canvas');
+                    canvas.className = 'liquid-canvas';
+                    canvas.style.display = 'block';
+
+                    container.appendChild(canvas);
+                    card.insertBefore(container, card.firstChild);
+                }
+
+                // Setup Canvas Context
+                const ctx = canvas.getContext('2d');
+                let particles = [];
+                let animationId;
+
+                function resize() {
+                    canvas.width = card.offsetWidth;
+                    canvas.height = card.offsetHeight;
+                }
+                resize();
+                // Optional: Resize observer if cards change size
+
+                class GoldDrop {
+                    constructor(x, y, size) {
+                        this.x = x;
+                        this.y = y;
+                        this.size = size;
+                        this.vy = Math.random() * 2 + 1; // Velocidad de caída
+                        this.onFloor = false;
+                        this.life = 1.0;
+                    }
+
+                    update() {
+                        if (!this.onFloor) {
+                            this.y += this.vy;
+                            this.vy += 0.1; // Gravedad
+
+                            // Hit the "floor" (bottom of card)
+                            // XD2 uses canvas.height - 20 for trigger, reset to -10
+                            if (this.y >= canvas.height - 20) {
+                                this.y = canvas.height - 10;
+                                this.onFloor = true;
+                            }
+                        } else {
+                            this.life -= 0.003; // Desvanecimiento lento (XD2 value) - was 0.005
+                            this.size += 0.15;  // Expansión (XD2 value) - was 0.2
+                        }
+                    }
+
+                    draw() {
+                        ctx.beginPath();
+                        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                        // Gold color base #D4AF37
+                        ctx.fillStyle = `rgba(212, 175, 55, ${this.life})`;
+                        ctx.fill();
+                    }
+                }
+
+                function animate() {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                    // Generate drops from top
+                    // XD2 uses 0.08 chance
+                    if (Math.random() < 0.08) {
+                        particles.push(new GoldDrop(Math.random() * canvas.width, -10, Math.random() * 12 + 8)); // XD2 size: 8-20
+                    }
+
+                    for (let i = 0; i < particles.length; i++) {
+                        particles[i].update();
+                        particles[i].draw();
+                        if (particles[i].life <= 0) {
+                            particles.splice(i, 1);
+                            i--;
+                        }
+                    }
+                    animationId = requestAnimationFrame(animate);
+                }
+
+                // Stop previous animation if any (naive approach, better to track IDs)
+                // specific implementation for this user request
+                animate();
+            });
+        }
+        // --- LOAD SAVED DATA ---
+        function loadProfileData() {
+            const fields = document.querySelectorAll('.editable-field');
+            fields.forEach(field => {
+                const id = field.id;
+                const saved = localStorage.getItem(`profile_${id}`);
+                if (saved) {
+                    const type = field.dataset.type;
+                    if (type === 'link') {
+                        try {
+                            const data = JSON.parse(saved);
+                            const linkDisplay = field.querySelector('.link-display');
+                            const urlHidden = field.querySelector('.url-hidden');
+
+                            linkDisplay.href = data.url;
+
+                            // Re-apply icon logic on load
+                            const iconHtml = data.url ? getFaviconImg(data.url) : '<i class="fas fa-plus"></i>';
+                            // Display fallback to URL if name is empty
+                            const displayText = data.url ? (data.name || data.url) : "Agregar enlace";
+
+                            linkDisplay.innerHTML = `${iconHtml} <span class="link-text-truncate">${displayText}</span>`;
+                            // Styles are now in CSS class .link-display
+
+                            urlHidden.innerText = data.url;
+                        } catch (e) { }
+                    } else {
+                        const span = field.querySelector('span');
+                        if (span) {
+                            span.innerText = saved;
+                            span.style.color = 'var(--title-color)'; // Reset placeholder color if any
+                        }
+                    }
+                }
+            });
+
+            // Settings
+            // Language logic handled by js/translations.js automatically
+
+            const muted = localStorage.getItem('mute_activity') === 'true';
+            const muteToggle = document.getElementById('mute-activity-toggle');
+            if (muteToggle) muteToggle.checked = muted;
+        }
+
+        // --- SETTINGS LOGIC ---
+        // --- TRANSLATION LOGIC ---
+        // Moved to js/translations.js
+
+        function toggleMuteActivity() {
+            const toggle = document.getElementById('mute-activity-toggle');
+            localStorage.setItem('mute_activity', toggle.checked);
+        }
+
+        // --- GUEST ACCESS CONTROL ---
+        function checkGuestAccess() {
+            const isLoggedIn = localStorage.getItem('isLoggedIn');
+
+            if (!isLoggedIn) {
+                console.log("Modo Invitado: Acceso restringido.");
+
+                // 1. Restrict Edit Button
+                const editBtn = document.getElementById('edit-mode-toggle');
+                if (editBtn) {
+                    // Remove existing onclick
+                    editBtn.removeAttribute('onclick');
+                    // Add Redirect
+                    editBtn.addEventListener('click', (e) => {
+                        e.stopImmediatePropagation();
+                        e.preventDefault();
+                        window.location.href = 'login.html';
+                    }, true); // Capture phase to be sure
+                }
+
+                // 2. Restrict Sidebar Menu Links
+                const menuLinks = document.querySelectorAll('.menu-items a');
+                menuLinks.forEach(link => {
+                    // Skip Logout (index.html) and Grades (grades.html)
+                    if (link.href.includes('grades.html') || link.href.includes('index.html')) {
+                        return; // Allow access
+                    }
+
+                    // Restrict other dashboard links
+                    link.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        window.location.href = 'login.html';
+                    });
+                });
+
+                // 3. Restrict Config Tab
+                // Find tab by text content or onclick attribute if possible, 
+                // but since tabs are "Settings" (Configuracion), let's target the clickable list items in sidebar too?
+                // The sidebar links were handled above. 
+                // The Tabs inside the page (Personal, Configuración)?
+
+                // Tabs are handled by onclick="openTab(...)".
+                // We can intercept the specific "Configuración" button.
+                const configTabBtn = document.querySelector('button[onclick="openTab(event, \'settings\')"]');
+                if (configTabBtn) {
+                    configTabBtn.removeAttribute('onclick');
+                    configTabBtn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        e.stopImmediatePropagation();
+                        window.location.href = 'login.html';
+                    }, true);
+                }
+            }
+        }
+
+        // Initial Load
+        checkGuestAccess(); // Run protection first
+        loadProfileData();
+    </script>
+
+    <!-- --- ACADEMIC LOGIC (GAMIFICATION & SORTING) --- -->
+    <script src="js/profile-academic.js"></script>
+    <script>
+        // Legacy script removed. Logic now in js/profile-academic.js
+    </script>
+    </script>
+
+    <!-- SVG Filter for Gooey Gold Effect (XD2 Exact Copy) -->
+    <svg xmlns="www.w3.org" style="display:none;">
+        <defs>
+            <filter id="gold-liquid">
+                <!-- stdDeviation="10" creates the gooey merge. 
+                     If card is too small, 10 might be too much, but user said "copy paste". 
+                     We'll try 8 as a slight safety compromise for the text legibility, 
+                     or stick to 10 if it looks robust. Let's do 10. -->
+                <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
+                <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 20 -10"
+                    result="goo" />
+                <!-- Simulación de brillo metálico (Oro) -->
+                <feSpecularLighting in="goo" surfaceScale="5" specularConstant="0.8" specularExponent="35"
+                    lighting-color="#ffe680" result="specular">
+                    <fePointLight x="50%" y="-50" z="150" />
+                </feSpecularLighting>
+                <feComposite in="specular" in2="goo" operator="in" result="specularOut" />
+                <feComposite in="goo" in2="specularOut" operator="arithmetic" k1="0" k2="1" k3="0.7" k4="0" />
+            </filter>
+        </defs>
+    </svg>
+    <style>
+        /* SUPER ADMIN BADGE STYLE */
+        .badge-super-admin {
+            background: #111 !important;
+            /* NEGRO para que el Oro resalte */
+            color: #FFD700 !important;
+            /* Texto Oro */
+            font-weight: 800 !important;
+            border: 2px solid #FFD700;
+            /* Borde Oro */
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
+            text-transform: uppercase;
+            padding: 5px 25px;
+            border-radius: 50px;
+            letter-spacing: 2px;
+            font-size: 0.9rem;
+            position: relative;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+            overflow: hidden;
+            /* Asegurar que no se salga nada */
+        }
+
+        @keyframes pulse-gold {
+            0% {
+                box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.7);
+            }
+
+            70% {
+                box-shadow: 0 0 0 10px rgba(255, 215, 0, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(255, 215, 0, 0);
+            }
+        }
+    </style>
+
+    <!-- Firebase Dependencies (Compat) -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+    <!-- Firebase Config & Profile Logic -->
+    <script src="js/firebase-config.js"></script>
+    <script src="js/profile-data.js"></script>
+    <script src="js/theme.js"></script>
+    <script src="js/notifications.js"></script>
+    <script src="js/translations.js"></script>
+    <script src="js/logout_modal.js"></script>
+    <script>
+        // ... (Existing inline scripts if any, or move them)
+        // Ensure global functions for edit mode remain accessible if they are not modules
+    </script>
+</body>
+
+
+<!-- Crop Modal -->
+<div id="crop-modal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Recortar Imagen</h3>
+            <span style="cursor:pointer; font-size:1.5rem; color:var(--text-color);"
+                onclick="closeModal()">&times;</span>
+        </div>
+        <div class="img-container">
+            <img id="image-to-crop" src="" style="max-width: 100%;">
+        </div>
+        <div class="modal-footer">
+            <button class="btn-profile btn-outline" onclick="closeModal()">Cancelar</button>
+            <button class="btn-profile btn-primary" id="btn-crop">Guardar Recorte</button>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal (Custom) -->
+<div id="delete-confirm-modal" class="modal">
+    <div class="modal-content">
+        <div
+            style="width: 60px; height: 60px; background: rgba(231, 76, 60, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px;">
+            <i class="fas fa-trash-alt" style="font-size: 1.5rem; color: #e74c3c;"></i>
+        </div>
+        <h3 style="margin-bottom: 10px; color: var(--title-color, #333);">¿Eliminar foto?</h3>
+        <p style="color: var(--text-color, #444); margin-bottom: 25px; opacity: 0.8;">Esta acción devolverá tu avatar a
+            las iniciales por defecto.</p>
+        <div style="display: flex; gap: 10px; justify-content: center;">
+            <button onclick="closeDeleteModal()"
+                style="padding: 10px 20px; border-radius: 8px; border: 1px solid var(--border-color, #ddd); background: transparent; color: var(--text-color, #444); cursor: pointer; flex: 1; font-weight: 500; transition: background 0.2s;">Cancelar</button>
+            <button onclick="confirmDeleteAvatar()"
+                style="padding: 10px 20px; border-radius: 8px; border: none; background: #e74c3c; color: white; cursor: pointer; flex: 1; font-weight: 600; box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3); transition: transform 0.2s;">Eliminar</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // --- LÓGICA DE RECORTAR IMAGEN (CROPPER.JS) ---
+    let cropper;
+    let currentCropType = null; // 'avatar' o 'cover'
+
+    document.addEventListener('DOMContentLoaded', () => {
+        // Cargar imágenes guardadas al iniciar
+        loadImages();
+
+        // 1. Configurar subida de Avatar
+        const avatarOverlay = document.querySelector('.avatar-overlay');
+        const avatarInput = document.getElementById('avatar-upload');
+
+        if (avatarOverlay && avatarInput) {
+            avatarOverlay.addEventListener('click', () => avatarInput.click());
+            avatarInput.addEventListener('change', (e) => handleFileSelect(e, 'avatar'));
+        }
+
+        // 2. Configurar subida de Portada
+        const coverBtn = document.querySelector('.edit-cover-btn');
+        const coverInput = document.getElementById('cover-upload');
+
+        if (coverBtn && coverInput) {
+            coverBtn.addEventListener('click', () => coverInput.click());
+            coverInput.addEventListener('change', (e) => handleFileSelect(e, 'cover'));
+        }
+
+        // 3. Configurar Botón de "Guardar Recorte"
+        const btnCrop = document.getElementById('btn-crop');
+        if (btnCrop) {
+            btnCrop.addEventListener('click', cropImage);
+        }
+    });
+
+    // Manejar selección de archivo
+    function handleFileSelect(event, type) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        currentCropType = type;
+        const reader = new FileReader();
+
+        reader.onload = function (e) {
+            const image = document.getElementById('image-to-crop');
+            const modal = document.getElementById('crop-modal');
+
+            // Cargar imagen en el modal
+            image.src = e.target.result;
+
+            // Mostrar modal
+            modal.classList.add('show', 'active');
+
+            // Ajustar tamaño del modal según el tipo
+            if (type === 'cover') {
+                modal.classList.add('wide-modal');
+            } else {
+                modal.classList.remove('wide-modal');
+            }
+
+            document.body.classList.add('modal-open');
+
+            // Destruir cropper anterior si existe
+            if (cropper) {
+                cropper.destroy();
+            }
+
+            // Iniciar Cropper
+            cropper = new Cropper(image, {
+                aspectRatio: type === 'avatar' ? 1 : 16 / 4, // 16:4 (4:1) for a much wider banner
+                viewMode: 2,
+                autoCropArea: 1,
+            });
+        };
+
+        reader.readAsDataURL(file);
+        event.target.value = ''; // Limpiar input
+    }
+
+    // Cerrar modal
+    function closeModal() {
+        const modal = document.getElementById('crop-modal');
+        modal.classList.remove('show', 'active');
+        document.body.classList.remove('modal-open');
+        if (cropper) {
+            cropper.destroy();
+            cropper = null;
+        }
+    }
+
+    // Recortar y Guardar
+    function cropImage() {
+        if (!cropper) return;
+
+        // Obtener el canvas recortado
+        const canvas = cropper.getCroppedCanvas({
+            width: currentCropType === 'avatar' ? 400 : 1200, // Calidad de salida
+            fillColor: '#fff',
+        });
+
+        // Convertir a base64 y guardar
+        const base64 = canvas.toDataURL('image/jpeg', 0.85); // Calidad JPG 85%
+        const key = currentCropType === 'avatar' ? 'profile_avatar' : 'profile_cover';
+
+        localStorage.setItem(key, base64);
+
+        // Actualizar vista inmediatamente
+        if (currentCropType === 'avatar') {
+            updateAvatarDOM(base64);
+
+            const user = firebase.auth().currentUser;
+            if (user) {
+                // 1. Update Auth Profile (Critical for new posts/comments)
+                user.updateProfile({ photoURL: base64 }).catch(err => console.error("Error updating Auth:", err));
+
+                // 2. Trigger Deep Sync (For past posts)
+                if (window.syncAvatarToPastPosts) {
+                    window.syncAvatarToPastPosts(user.uid, base64);
+                }
+            }
+        } else {
+            updateCoverDOM(base64);
+        }
+
+        closeModal();
+    }
+
+    // Funciones Auxiliares de Vista
+    function loadImages() {
+        const avatar = localStorage.getItem('profile_avatar');
+        const cover = localStorage.getItem('profile_cover');
+        if (avatar) updateAvatarDOM(avatar);
+        if (cover) updateCoverDOM(cover);
+    }
+
+    function updateAvatarDOM(src) {
+        const mainAvatar = document.querySelector('.profile-avatar-lg .avatar-img');
+        const sidebarAvatars = document.querySelectorAll('.user-avatar-sm'); // Select ALL sidebar avatars
+        const removeBtn = document.getElementById('remove-avatar-btn');
+
+        // Actualizar Avatar Principal
+        if (mainAvatar) {
+            mainAvatar.style.backgroundImage = `url('${src}')`;
+            mainAvatar.innerText = ''; // Quitar iniciales
+            mainAvatar.style.backgroundSize = 'cover';
+            mainAvatar.style.backgroundPosition = 'center';
+            if (removeBtn) removeBtn.style.display = 'flex';
+        }
+        // Actualizar Avatars Sidebar (Responsive)
+        sidebarAvatars.forEach(av => {
+            av.style.backgroundImage = `url('${src}')`;
+            av.style.backgroundSize = 'cover';
+            av.style.backgroundPosition = 'center';
+            av.innerText = '';
+        });
+    }
+
+    // REMOVE AVATAR LOGIC (CUSTOM MODAL)
+    window.removeAvatar = function () {
+        const modal = document.getElementById('delete-confirm-modal');
+        if (modal) modal.classList.add('active');
+    }
+
+    window.closeDeleteModal = function () {
+        const modal = document.getElementById('delete-confirm-modal');
+        if (modal) modal.classList.remove('active');
+    }
+
+    window.confirmDeleteAvatar = async function () {
+        const btn = document.querySelector('#delete-confirm-modal button:last-child');
+        if (btn) {
+            btn.innerText = "Eliminando...";
+            btn.disabled = true;
+            btn.style.opacity = 0.7;
+        }
+
+        // 1. Clear Local
+        localStorage.removeItem('profile_avatar');
+
+        try {
+            const user = firebase.auth().currentUser;
+            if (user) {
+                // 2. Wait for Auth Update
+                await user.updateProfile({ photoURL: null });
+                console.log("Auth Profile cleared");
+
+                // 3. Wait for Firestore Update
+                await window.db.collection('users').doc(user.uid).update({
+                    photoURL: null
+                });
+                console.log("Foto eliminada de Firestore");
+
+                // 4. Trigger Deep Sync (Background)
+                if (window.syncAvatarToPastPosts) {
+                    window.syncAvatarToPastPosts(user.uid, null);
+                }
+            }
+        } catch (error) {
+            console.error("Error eliminando foto:", error);
+            alert("Hubo un error al eliminar la foto. Por favor intenta de nuevo.");
+            if (btn) {
+                btn.innerText = "Eliminar";
+                btn.disabled = false;
+                btn.style.opacity = 1;
+            }
+            return;
+        }
+
+        // 5. Reset UI & Reload
+        closeDeleteModal();
+        setTimeout(() => location.reload(), 500);
+    }
+
+    // Update loadImages to check for button visibility
+    const originalLoadImages = loadImages;
+    loadImages = function () { // Override
+        const avatar = localStorage.getItem('profile_avatar');
+        const cover = localStorage.getItem('profile_cover');
+        const removeBtn = document.getElementById('remove-avatar-btn');
+
+        if (avatar) {
+            updateAvatarDOM(avatar);
+            if (removeBtn) removeBtn.style.display = 'flex';
+        } else {
+            if (removeBtn) removeBtn.style.display = 'none';
+        }
+
+        if (cover) updateCoverDOM(cover);
+    }
+
+    function updateCoverDOM(src) {
+        const cover = document.querySelector('.profile-cover');
+        if (cover) {
+            cover.style.backgroundImage = `url('${src}')`;
+            cover.style.backgroundSize = 'cover';
+            cover.style.backgroundPosition = 'center';
+        }
+    }
+</script>
+</body>
+
+</html>

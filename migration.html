@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Migración de Datos</title>
+    <!-- Firebase SDKs (Compat) -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
+
+    <!-- Config & Data -->
+    <script src="js/firebase-config.js"></script>
+    <script src="js/courses_data.js"></script>
+</head>
+
+<body style="font-family: sans-serif; padding: 20px; background: #f0f2f5;">
+
+    <h1>Migración de Cursos a Firestore</h1>
+    <p>Este script leerá <code>COURSES_DATA</code> y subirá cada curso a la colección <code>courses</code>.</p>
+
+    <button onclick="migrateData()"
+        style="padding: 10px 20px; font-size: 16px; cursor: pointer; background: #007bff; color: white; border: none; border-radius: 5px;">
+        Iniciar Migración
+    </button>
+
+    <div id="log"
+        style="margin-top: 20px; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); max-height: 400px; overflow-y: auto;">
+        Esperando inicio...
+    </div>
+
+    <script>
+        function log(msg, type = 'info') {
+            const el = document.getElementById('log');
+            const color = type === 'error' ? 'red' : (type === 'success' ? 'green' : 'black');
+            el.innerHTML += `<div style="color: ${color}; margin-bottom: 5px;">[${new Date().toLocaleTimeString()}] ${msg}</div>`;
+        }
+
+        async function migrateData() {
+            log("Iniciando migración...", "info");
+
+            if (!window.db) {
+                log("Error: Firebase DB no inicializado.", "error");
+                return;
+            }
+
+            if (typeof COURSES_DATA === 'undefined') {
+                log("Error: COURSES_DATA no encontrado.", "error");
+                return;
+            }
+
+            const courses = Object.values(COURSES_DATA);
+            log(`Encontrados ${courses.length} cursos para migrar.`);
+
+            for (const course of courses) {
+                try {
+                    // Clean up data if necessary (e.g. ensure valid objects)
+                    // We use the ID from the object as the Doc ID
+                    const docRef = db.collection('courses').doc(course.id);
+
+                    // Check if exists
+                    const doc = await docRef.get();
+                    if (doc.exists) {
+                        log(`Curso [${course.id}] ya existe. Saltando...`, "info");
+                    } else {
+                        await docRef.set(course);
+                        log(`Curso [${course.id}] migrado exitosamente.`, "success");
+                    }
+
+                } catch (error) {
+                    log(`Error migrando curso [${course.id}]: ${error.message}`, "error");
+                    console.error(error);
+                }
+            }
+
+            log("--- PROCESO TERMINADO ---", "success");
+        }
+    </script>
+</body>
+
+</html>

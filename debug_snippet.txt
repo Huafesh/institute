@@ -1,0 +1,20 @@
+                        ThemeAdapter.initDefault();
+                    }
+                }
+            }
+
+            // 5. Manejar la subida de imagen local (FileReader + Canvas Resizing)
+            document.addEventListener('DOMContentLoaded', () => {
+                const bgInput = document.getElementById('bg-upload-in
+put');
+
+                if (bgInput) {
+                    bgInput.addEventListener('change', function (e) {
+                        if (this.files && this.files[0]) {
+                            const file = this.files[0];
+
+                            // 1. SI ES VIDEO: Validar duración (Max 60s)
+                            if (file.type.startsWith('video/')) {
+                                const videoTest = document.createElement('video');
+                                videoTest.preload = 'metadata';
+                                videoTest.onloadedmetadata = function () {

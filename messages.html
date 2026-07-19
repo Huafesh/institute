@@ -1,0 +1,671 @@
+<!DOCTYPE html><html lang="es"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mensajería | Ceind Institute</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&amp;display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    
+
+    <link rel="stylesheet" href="css/messages.css">
+</head>
+
+<body>
+    <div class="main-content">
+
+
+
+        <nav class="sidebar">
+            <!-- MARCA -->
+            <div class="brand">
+                <i class="fas fa-graduation-cap"></i> <span>Ceind</span>
+            </div>
+
+            <!-- TARJETA DE USUARIO -->
+            <div class="user-profile clickable-profile" onclick="window.location.href='profile.html'">
+                <div class="user-avatar-sm">
+                    <!-- Initials or BG Image loaded by JS -->
+                    JP
+                </div>
+                <div class="user-info">
+                    <h4>Juan Pérez</h4>
+                    <span>Estudiante ID: 202501</span>
+                </div>
+            </div>
+
+            <!-- MENÚ -->
+            <ul class="menu-items">
+                <li><a href="institution.html"><i class="fas fa-university"></i> <span>Página de la
+                            institución</span></a>
+                </li>
+                <li><a href="activity.html"><i class="fas fa-globe"></i> <span>Actividad</span></a></li>
+
+                <li id="student-link"><a href="dashboard.html"><i class="fas fa-book"></i> <span>Mis Cursos</span></a>
+                </li>
+                <li id="admin-link" style="display: none;"><a href="admin_panel.html"><i class="fas fa-th-large"></i>
+                        <span>Panel de Control</span></a></li>
+
+                <li><a href="schedule.html"><i class="fas fa-calendar-alt"></i> <span>Horario</span></a></li>
+                <li><a href="grades.html"><i class="fas fa-chart-line"></i> <span>Calificaciones</span></a></li>
+
+                <!-- Enlace Activo con Notificación -->
+                <li>
+                    <a href="messages.html" class="active">
+                        <i class="fas fa-paper-plane"></i>
+                        <span>Mensajes</span>
+                        <span style="background:red; color:white; padding:2px 6px; border-radius:10px; font-size:0.7rem; margin-left:auto;">2</span>
+                    </a>
+                </li>
+            </ul>
+
+            <!-- BOTÓN SALIR -->
+            <ul class="menu-items logout">
+                <li>
+                    <a href="index.html" onclick="localStorage.removeItem('isLoggedIn');">
+                        <i class="fas fa-sign-out-alt"></i> <span>Cerrar Sesión</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <div class="messaging-layout">
+            <div class="contacts-panel">
+                <div class="contacts-header">
+                    <div class="search-bar">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Buscar...">
+                    </div>
+                    <div class="filters-container">
+                        <button class="scroll-btn left" id="scrollLeftBtn" onclick="scrollFilters(-1)" style="display:none;">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <div class="filters-scroll" id="filtersScroll">
+                            <button class="filter-btn active">Todos</button>
+                            <button class="filter-btn">Alumnos</button>
+                            <button class="filter-btn">Profesores</button>
+                            <!-- NEW ADMIN TAB -->
+                            <button class="filter-btn">Administrativos</button>
+                        </div>
+                        <button class="scroll-btn right" id="scrollRightBtn" onclick="scrollFilters(1)">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="contacts-list" id="contactsList">
+                    <div class="contact-item active" data-category="Profesores">
+                        <div class="c-avatar-img" style="background-image: url('https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&amp;fit=crop&amp;w=100&amp;q=80');">
+                        </div>
+                        <div class="c-info">
+                            <div class="c-info-top">
+                                <span class="c-name">Prof. Ana Miller</span>
+                                <div class="meta-info-right">
+                                    <span class="c-time">10:45</span>
+                                </div>
+                            </div>
+                            <div class="c-preview" style="color:#fff;">Por favor, usa la opción HD...</div>
+                        </div>
+                    </div>
+                    <div class="contact-item" data-category="Alumnos">
+                        <div class="c-avatar-img" style="background-color: #ff9f43; display:flex; align-items:center; justify-content:center; color:white; font-weight:700;">
+                            LC</div>
+                        <div class="c-info">
+                            <div class="c-info-top">
+                                <span class="c-name">Luis Castillo</span>
+                                <div class="meta-info-right">
+                                    <span class="c-time">Ayer</span>
+                                </div>
+                            </div>
+                            <div class="c-preview">Ya subí la tarea al drive.</div>
+                        </div>
+                    </div>
+                    <div class="contact-item" data-category="Administrativos">
+                        <div class="c-avatar-img" style="background-color: #003d80; display:flex; align-items:center; justify-content:center; color:white;">
+                            <i class="fas fa-user-shield"></i>
+                        </div>
+                        <div class="c-info">
+                            <div class="c-info-top">
+                                <span class="c-name">Soporte Técnico</span>
+                                <div class="meta-info-right">
+                                    <span class="c-time">Lun</span>
+                                </div>
+                            </div>
+                            <div class="c-preview">Tu solicitud fue aprobada.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chat-area" id="main-chat-area">
+                <!-- VIDEO BACKGROUND LAYER -->
+                <video id="bg-video-element" autoplay="" loop="" muted="" playsinline="" style="display:none; position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; z-index:0; pointer-events:none;"></video>
+                <!-- Existing content starts here (ensure z-index > 0 for them) -->
+                <div class="chat-header" style="position:relative; z-index:1;">
+                    <div style="display:flex; align-items:center; gap:15px;">
+                        <div class="c-avatar-img header-profile-btn" onclick="goToContactInfo()" title="Ver perfil" style="width:40px; height:40px; background-image: url('https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&amp;fit=crop&amp;w=100&amp;q=80');">
+                        </div>
+                        <div class="chat-user-info">
+                            <h4>Prof. Ana Miller</h4>
+                            <span>En línea</span>
+                        </div>
+                    </div>
+                    <div class="chat-actions">
+                        <i class="fas fa-search action-icon" id="chat-search-btn"></i>
+
+                        <i class="fas fa-ellipsis-v action-icon" id="menu-trigger"></i>
+
+                        <div class="chat-dropdown" id="chatDropdown">
+                            <ul>
+                                <li onclick="goToContactInfo()"><i class="far fa-user"></i> Inf. del contacto</li>
+                                <li onclick="toggleSelectionMode()"><i class="far fa-check-square"></i> Seleccionar
+                                    mensajes
+                                </li>
+                                <li onclick="toggleSearch()"><i class="fas fa-search"></i> Buscar</li>
+                                <li onclick="toggleMute()" id="mute-option"><i class="far fa-bell-slash"></i> Silenciar
+                                    notificaciones</li>
+                                <li onclick="openBgPicker()"><i class="far fa-image"></i> Cambiar fondo de
+                                    pantalla</li>
+                                <li onclick="openClearModal()"><i class="far fa-trash-alt"></i> Vaciar chat</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <!-- SEARCH BAR (Now Inside Header) -->
+                    <div class="chat-search-bar" id="chat-search-bar">
+                        <div class="search-input-wrapper">
+                            <i class="fas fa-search"></i>
+                            <textarea id="in-chat-search-input" placeholder="Buscar..." rows="1"></textarea>
+                        </div>
+                        <div class="search-navigation">
+                            <span id="search-counter">0 de 0</span>
+                            <div class="nav-arrows">
+                                <i class="fas fa-chevron-up" id="btn-search-up"></i>
+                                <i class="fas fa-chevron-down" id="btn-search-down"></i>
+                            </div>
+                            <i class="fas fa-times close-search" id="btn-search-close"></i>
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <div class="messages-container" id="msg-container">
+                    <span class="date-divider">Hoy</span>
+                    <div class="message msg-sent">Hola profesora, tengo una duda con la exportación.<div class="msg-info">
+                            10:30 <i class="fas fa-check"></i></div>
+                    </div>
+                    <div class="message msg-received">¡Hola Juan! Dime, ¿en qué parte te quedaste?<div class="msg-info">
+                            10:32</div>
+                    </div>
+                    <div class="message msg-sent">No sé si enviar el video en calidad normal o HD.<div class="msg-info">
+                            10:33 <i class="fas fa-check-double"></i></div>
+                    </div>
+                    <div class="message msg-received">Por favor, usa la opción <strong>HD</strong> si tienes diagramas
+                        pequeños.<div class="msg-info">10:45</div>
+                    </div>
+                </div>
+
+
+
+                <div class="chat-input-area" id="chat-input-area">
+                    <!-- REPLY PREVIEW BAR (Inserted inside for absolute positioning) -->
+                    <div id="reply-preview-bar" class="reply-preview-bar" style="display: none;">
+                        <div class="reply-content-wrapper">
+                            <div class="reply-accent-line"></div>
+                            <div class="reply-info">
+                                <span class="reply-title" id="reply-title">Reply Name</span>
+                                <span class="reply-text" id="reply-text">Message content preview...</span>
+                            </div>
+                        </div>
+                        <i class="fas fa-times close-reply" onclick="closeReplyPreview()"></i>
+                    </div>
+                    <!-- Emoji Picker (Now Inside Relative Container) -->
+                    <div class="emoji-picker" id="emoji-picker">
+                        <div class="emoji-nav">
+                            <button class="nav-btn active" data-target="recent" title="Recientes"><i class="far fa-clock"></i></button>
+                            <button class="nav-btn" data-target="smileys" title="Caras"><i class="far fa-smile"></i></button>
+                            <button class="nav-btn" data-target="animals" title="Animales"><i class="fas fa-cat"></i></button>
+                            <button class="nav-btn" data-target="food" title="Comida"><i class="fas fa-hamburger"></i></button>
+                            <button class="nav-btn" data-target="activity" title="Actividades"><i class="fas fa-futbol"></i></button>
+                            <button class="nav-btn" data-target="travel" title="Viajes"><i class="fas fa-car"></i></button>
+                            <button class="nav-btn" data-target="objects" title="Objetos"><i class="far fa-lightbulb"></i></button>
+                            <button class="nav-btn" data-target="symbols" title="Símbolos"><i class="fas fa-hashtag"></i></button>
+                            <button class="nav-btn" data-target="flags" title="Banderas"><i class="far fa-flag"></i></button>
+                        </div>
+
+                        <div class="emoji-search-container">
+                            <i class="fas fa-search"></i>
+                            <input type="text" class="emoji-search-input" placeholder="Buscar emoji..." autocomplete="off">
+                        </div>
+
+                        <div class="emoji-body" id="emoji-grid">
+                        </div>
+                    </div>
+
+
+
+                    
+                    <!-- LINK PREVIEW BAR -->
+                    <div id="link-preview-bar" class="link-preview-bar">
+                        <div class="lp-loading" style="display:none; align-items:center; gap:10px;">
+                            <i class="fas fa-spinner fa-spin"></i> Cargando vista previa...
+                        </div>
+                        <div class="lp-content" style="display:none; align-items:center;">
+                            <div class="lp-line" style="width:2px; height:36px; background:#3390ec; margin-right:10px;">
+                            </div>
+                            <div id="lp-thumb" style="width:36px; height:36px; background-size:cover; background-position:center; margin-right:10px; border-radius:4px; display:none;">
+                            </div>
+                            <div style="display:flex; flex-direction:column; overflow:hidden; flex:1;">
+                                <div id="lp-title" style="color:#3390ec; font-weight:600; font-size:0.9rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                                    Title</div>
+                                <div id="lp-desc" style="color:#aaa; font-size:0.8rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                                    Description</div>
+                                <div id="lp-domain" style="color:#777; font-size:0.75rem;">domain.com</div>
+                            </div>
+                            <i class="fas fa-times" onclick="closeLinkPreview()" style="cursor:pointer; color:#777; margin-left:10px;"></i>
+                        </div>
+                    </div>
+
+                    <!-- Standard Inputs -->
+                    <i class="far fa-smile input-icon" style="margin-right:10px;"></i>
+                    <div style="position:relative;">
+                        <i class="fas fa-paperclip input-icon" id="attach-btn" title="Adjuntar"></i>
+                        <!-- ATTACHMENT MENU -->
+                        <div class="attach-menu" id="attach-menu">
+                            <div class="attach-item" onclick="triggerImageUpload()">
+                                <i class="fas fa-image" style="color:#4caf50;"></i>
+                                <span>Imágenes</span>
+                            </div>
+                            <div class="attach-item" onclick="openGifModal()">
+                                <i class="fas fa-film" style="color:#e91e63;"></i>
+                                <span>GIFs</span>
+                            </div>
+                        </div>
+                    </div>
+                    <input type="file" id="image-upload-input" accept="image/*" style="display:none">
+                    <input type="file" id="gif-upload-input" accept="image/gif" style="display:none">
+                    <textarea class="message-input" id="input-msg" placeholder="Escribe un mensaje..." rows="1"></textarea>
+                    <!-- HD Button Removed from here -->
+
+                    <!-- Recording UI (Hidden by default) -->
+                    <div class="recording-ui" id="rec-ui">
+                        <i class="fas fa-trash-alt rec-icon" onclick="cancelRecording()" title="Cancelar"></i>
+
+                        <!-- NEW PAUSE BUTTON Logic -->
+                        <div class="rec-status">
+                            <i class="fas fa-pause-circle rec-control-icon" id="rec-pause-btn" title="Pausar"></i>
+                            <span id="rec-timer">0:00</span>
+                            <div class="rec-dot"></div>
+                        </div>
+
+                        <div class="rec-waveform" id="visualizer-container">
+                            <!-- Bars will be generated by JS -->
+                        </div>
+                    </div>
+
+                    
+
+                    <!-- Send/Mic/Audio Action Container -->
+                    <div class="send-actions show-mic" id="action-container">
+                        <!-- Mic Button (Default) -->
+                        <button class="action-btn-circle btn-mic" id="btn-mic" onclick="startRecording()">
+                            <i class="fas fa-microphone"></i>
+                        </button>
+                        <!-- Audio Send Button (Green) -->
+                        <button class="action-btn-circle btn-audio-send" id="btn-audio-send" onclick="sendAudio()">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                        <!-- Send Button (Typing) -->
+                        <button class="action-btn-circle btn-send" id="btn-send" onclick="sendMessage()">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Barra de Selección (Movida dentro del chat area) -->
+                <div class="selection-bar" id="selection-bar">
+                    <span class="selection-count"><span id="selected-count">0</span> seleccionados</span>
+                    <div class="selection-actions">
+                        <button class="sel-btn" onclick="actionStar()"><i class="fas fa-star"></i></button>
+                        <button class="sel-btn" onclick="actionForwardSelected()"><i class="fas fa-share"></i></button>
+                        <button class="sel-btn" onclick="actionDeleteSelected()"><i class="fas fa-trash"></i></button>
+                        <button class="sel-btn" onclick="toggleSelectionMode()"><i class="fas fa-times"></i></button>
+                    </div>
+                </div>
+
+                <!-- Scroll to Bottom Button -->
+                <button id="scroll-bottom-btn" class="scroll-bottom-btn">
+                    <i class="fas fa-arrow-down"></i>
+                    <!-- <span class="scroll-bottom-notification">1</span> Optional: Unread count -->
+                </button>
+
+                
+            </div>
+        </div>
+
+        <!-- BACKGROUND PICKER OVERLAY -->
+        <div class="bg-picker-modal" id="bg-modal">
+            <div class="bg-picker-header">
+                <h4>Fondo del chat</h4>
+                <i class="fas fa-times" style="cursor:pointer;" onclick="closeBgPicker()"></i>
+            </div>
+            <div class="bg-options-grid">
+                <div class="bg-circle default-bg-btn" title="Restaurar por defecto" onclick="setChatBg('default')">Def
+                </div>
+                <div class="bg-circle" style="background:#0e1621;" onclick="setChatBg('#0e1621')"></div>
+                <div class="bg-circle" style="background:#2b5278;" onclick="setChatBg('#2b5278')"></div>
+                <div class="bg-circle" style="background:linear-gradient(45deg, #cc2b5e, #753a88);" onclick="setChatBg('linear-gradient(45deg, #cc2b5e, #753a88)')"></div>
+                <div class="bg-circle" style="background:linear-gradient(to right, #24c6dc, #514a9d);" onclick="setChatBg('linear-gradient(to right, #24c6dc, #514a9d)')"></div>
+                <div class="bg-circle" style="background:#555;" onclick="setChatBg('#555')"></div>
+                <div class="bg-circle" style="background:#000;" onclick="setChatBg('#000')"></div>
+            </div>
+        </div>
+
+        <!-- IMAGE VIEWER MODAL -->
+        <div class="image-viewer" id="image-viewer">
+            <div class="viewer-header">
+                <div style="flex:1"></div> <!-- Spacer pushes everything to right -->
+                <i class="fas fa-share" onclick="openShareModal()" title="Reenviar"></i>
+                <i class="fas fa-download" id="viewer-download-btn" onclick="downloadCurrentImage()" title="Descargar"></i>
+                <i class="fas fa-search-plus" onclick="toggleZoom()" id="zoom-btn" title="Zoom"></i>
+                <i class="fas fa-times" onclick="closeImageViewer()" title="Cerrar"></i>
+            </div>
+            <div class="viewer-content">
+                <img id="viewer-img">
+            </div>
+        </div>
+
+        <!-- FORWARD MODAL (Share) -->
+        <div class="forward-modal-overlay" id="forward-modal">
+            <div class="forward-modal-content">
+                <div class="forward-header">
+                    <i class="fas fa-times" onclick="closeShareModal()" style="color:#aaa; cursor:pointer; font-size: 1.2rem;"></i>
+                    <input type="text" id="forward-search-input" placeholder="Reenviar a..." class="forward-search" autocomplete="off">
+                </div>
+                <div class="forward-list" id="forward-list-container">
+                </div>
+                <!-- Footer for Multi-Select (Hidden by default) -->
+                <div class="forward-footer" id="forward-footer">
+                    <input type="text" id="forward-comment-input" placeholder="Escribe un comentario..." class="forward-comment-input">
+                    <button class="forward-send-btn" onclick="performMultiForward()">
+                        <i class="fas fa-paper-plane"></i>
+                        <!-- <span id="forward-btn-text">Reenviar</span> Icon only to save space -->
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- GIF SEARCH MODAL -->
+        <div class="gif-modal-overlay" id="gif-modal">
+            <div class="gif-modal-content">
+                <div class="gif-header">
+                    <div class="gif-search-bar">
+                        <i class="fas fa-search" style="color:#7f91a4"></i>
+                        <input type="text" id="gif-search-input" placeholder="Buscar GIFs en Giphy...">
+                    </div>
+                    <i class="fas fa-times" onclick="closeGifModal()" style="color:#aaa; cursor:pointer;"></i>
+                </div>
+                <div class="gif-grid" id="gif-grid">
+                    <!-- Start with trends -->
+                    <div style="grid-column: 1/-1; text-align:center; padding:20px; color:#555;">
+                        <button onclick="fetchTrendingGifs()" style="background:#3390ec; border:none; color:white; padding:8px 15px; border-radius:4px; cursor:pointer;">
+                            <i class="fas fa-bolt"></i> Ver Tendencias
+                        </button>
+                        <!-- <i class="fas fa-spinner fa-spin"></i> Cargando tendencias... -->
+                    </div>
+                </div>
+                <div class="gif-footer" onclick="triggerLocalGifUpload()">
+                    <i class="fas fa-folder-open" style="margin-right:8px;"></i> Subir GIF desde mis archivos
+                </div>
+            </div>
+        </div>
+
+        
+
+        <!-- IMAGE PREVIEW MODAL (Pre-send) -->
+        <div class="image-preview-modal" id="preview-modal">
+            <div class="preview-inner-card"> <!-- Card Wrapper -->
+                <div class="preview-header">
+                    <span style="font-size:1.1rem; font-weight:600; color:#fff; margin-left:10px;">Send Photo</span>
+                    <div style="flex:1"></div>
+                    <i class="fas fa-times" onclick="closePreviewModal()" style="font-size:1.2rem; color:#ccc; cursor:pointer;"></i>
+                </div>
+                <div class="preview-content">
+                    <img id="preview-img-element">
+                </div>
+                <div class="preview-footer">
+                    <div class="hd-toggle hd-badge" id="hd-preview-btn" onclick="this.classList.toggle('active')" style="display:flex; margin-right:5px; height: 40px; width: 40px; align-items:center; justify-content:center; border-radius:50%;">
+                        HD</div>
+                    <div class="caption-bar" style="position:relative;">
+                        <textarea id="preview-caption" placeholder="Add a caption..." rows="1"></textarea>
+                        <i class="far fa-smile" id="preview-emoji-btn" style="color:#aaa; font-size:1.2rem; cursor:pointer;"></i>
+
+                        <!-- Preview Emoji Picker -->
+                        <div class="emoji-picker" id="preview-emoji-picker" style="bottom: 120%; left: auto; right: 0; width: 300px; height: 300px;">
+                            <div class="emoji-nav">
+                                <button class="nav-btn active" data-target="recent" title="Recientes"><i class="far fa-clock"></i></button>
+                                <button class="nav-btn" data-target="smileys" title="Caras"><i class="far fa-smile"></i></button>
+                                <button class="nav-btn" data-target="animals" title="Animales"><i class="fas fa-cat"></i></button>
+                                <button class="nav-btn" data-target="food" title="Comida"><i class="fas fa-hamburger"></i></button>
+                                <button class="nav-btn" data-target="activity" title="Actividades"><i class="fas fa-futbol"></i></button>
+                                <button class="nav-btn" data-target="travel" title="Viajes"><i class="fas fa-car"></i></button>
+                                <button class="nav-btn" data-target="objects" title="Objetos"><i class="far fa-lightbulb"></i></button>
+                                <button class="nav-btn" data-target="symbols" title="Símbolos"><i class="fas fa-hashtag"></i></button>
+                                <button class="nav-btn" data-target="flags" title="Banderas"><i class="far fa-flag"></i></button>
+                            </div>
+
+                            <div class="emoji-body" id="preview-emoji-grid">
+                            </div>
+                        </div>
+                    </div>
+                    <button class="send-preview-btn" onclick="sendFromPreview()">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        
+
+        <div class="modal-overlay" id="clear-chat-modal">
+            <div class="modal-box">
+                <h3>Vaciar chat</h3>
+                <p id="clear-chat-text">¿Estás seguro? Esta acción borrará todo el historial de este chat.</p>
+
+                <div class="progress-container" id="clear-progress-box" style="display: none;">
+                    <div class="progress-bar-bg">
+                        <div class="progress-bar-fill" id="clear-progress-fill"></div>
+                    </div>
+                    <p class="progress-text" id="clear-progress-text">Calculando mensajes... 0%</p>
+                </div>
+
+                <div class="modal-buttons" id="clear-chat-buttons">
+                    <button class="btn-cancel" onclick="closeClearModal()">Cancelar (No)</button>
+                    <button class="btn-confirm" onclick="startClearProcess()">Vaciar (Sí)</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Delete Single Msg Modal (NOW OUTSIDE) -->
+        <div class="modal-overlay" id="delete-single-msg-modal">
+            <div class="modal-box delete-modal-box">
+                <h3>¿Eliminar mensaje?</h3>
+                <p class="delete-warning-text">¿Estás seguro de que quieres eliminar este mensaje?</p>
+
+                <div class="delete-checkbox-wrapper">
+                    <label class="modern-checkbox">
+                        <input type="checkbox" id="delete-for-everyone-check">
+                        <span class="checkmark"></span>
+                        <span class="checkbox-label">Eliminar también para <span id="del-contact-name-span" class="highlight-name">...</span></span>
+                    </label>
+                </div>
+
+                <div class="modal-buttons">
+                    <button class="btn-cancel" onclick="closeDeleteSingleModal()">Cancelar</button>
+                    <button class="btn-confirm btn-danger" onclick="confirmDeleteSingleMsg()">Eliminar</button>
+                </div>
+            </div>
+        </div>
+        
+
+        <!-- Custom Toast Element -->
+        <div id="custom-toast"><i class="fas fa-check-circle"></i> <span id="toast-message">Mensaje copiado</span></div>
+
+        
+        
+    </div>
+    <!-- WALLPAPER PICKER MODAL -->
+    <div class="bg-picker-modal" id="bg-picker-modal">
+        <div class="bg-picker-content">
+            <div class="bg-picker-header">
+                <h4>Elegir fondo</h4>
+                <i class="fas fa-times" onclick="closeBgPicker()" style="cursor:pointer;"></i>
+            </div>
+
+            <div class="bg-options-grid">
+                <div class="bg-circle default-bg-btn" title="Restaurar fondo original" onclick="setChatBg('default')">
+                    <i class="fas fa-undo"></i>
+                </div>
+
+                <div class="bg-circle" style="background: #333; border: 2px dashed #777; display:flex; align-items:center; justify-content:center;" onclick="document.getElementById('bg-upload-input').click()" title="Subir imagen propia">
+                    <i class="fas fa-upload" style="color:#aaa; font-size: 1.2rem;"></i>
+                </div>
+
+                <div class="bg-circle" style="background:#0e1621;" onclick="setChatBg('#0e1621')"></div>
+                <div class="bg-circle" style="background:#2b5278;" onclick="setChatBg('#2b5278')"></div>
+                <div class="bg-circle" style="background:linear-gradient(45deg, #cc2b5e, #753a88);" onclick="setChatBg('linear-gradient(45deg, #cc2b5e, #753a88)')"></div>
+            </div>
+
+            <!-- ADAPTIVE THEME TOGGLE -->
+            <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: space-between;">
+                <div style="display: flex; flex-direction: column;">
+                    <span style="color: #fff; font-size: 0.95rem; font-weight: 500;">Camuflaje Dinámico</span>
+                    <span style="color: #bbb; font-size: 0.75rem;">Adaptar colores al fondo</span>
+                </div>
+                <label class="switch" style="position: relative; display: inline-block; width: 40px; height: 24px;">
+                    <input type="checkbox" id="adaptive-theme-toggle" onchange="ThemeAdapter.toggleAdaptive(this.checked)">
+                    <span class="slider round" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #555; transition: .4s; border-radius: 34px;"></span>
+                    
+                </label>
+            </div>
+
+            <input type="file" id="bg-upload-input" accept="image/jpeg, image/png, image/webp, image/gif, video/mp4, video/webm" style="display:none">
+        </div>
+    </div>
+    <!-- MUTE MODAL -->
+    <!-- MUTE MODAL HTML -->
+    <div class="modal-overlay" id="mute-modal">
+        <div class="modal-box mute-modal-box">
+            <div class="mute-header">
+                <div class="mute-avatar" id="mute-modal-avatar">AM</div>
+                <h3>Notifications</h3>
+            </div>
+
+            <div class="mute-options-list">
+                <label class="mute-option">
+                    <input type="radio" name="mute-time" value="1h">
+                    <span class="mute-radio"></span>
+                    <span class="mute-text">For 1 Hour</span>
+                </label>
+                <label class="mute-option">
+                    <input type="radio" name="mute-time" value="4h">
+                    <span class="mute-radio"></span>
+                    <span class="mute-text">For 4 Hours</span>
+                </label>
+                <label class="mute-option">
+                    <input type="radio" name="mute-time" value="8h">
+                    <span class="mute-radio"></span>
+                    <span class="mute-text">For 8 Hours</span>
+                </label>
+                <label class="mute-option">
+                    <input type="radio" name="mute-time" value="1d">
+                    <span class="mute-radio"></span>
+                    <span class="mute-text">For 1 Day</span>
+                </label>
+                <label class="mute-option">
+                    <input type="radio" name="mute-time" value="3d">
+                    <span class="mute-radio"></span>
+                    <span class="mute-text">For 3 Days</span>
+                </label>
+                <label class="mute-option">
+                    <input type="radio" name="mute-time" value="forever" checked="">
+                    <span class="mute-radio"></span>
+                    <span class="mute-text">Forever</span>
+                </label>
+            </div>
+
+            <div class="modal-buttons mute-footer-btns">
+                <button class="btn-mute-text cancel" onclick="closeMuteModal()">CANCEL</button>
+                <button class="btn-mute-text confirm" onclick="confirmMuteAction()">MUTE</button>
+            </div>
+        </div>
+    </div>
+    <!-- CONTEXT MENU (Reactions & Actions) -->
+    <div class="context-menu" id="msg-context-menu">
+        <div class="reaction-bar-container">
+            <div class="reaction-quick-row">
+                <span class="reaction-emoji" onclick="reactToMessage('👍')">👍</span>
+                <span class="reaction-emoji" onclick="reactToMessage('❤️')">❤️</span>
+                <span class="reaction-emoji" onclick="reactToMessage('😂')">😂</span>
+                <span class="reaction-emoji" onclick="reactToMessage('😮')">😮</span>
+                <span class="reaction-emoji" onclick="reactToMessage('😢')">😢</span>
+                <span class="reaction-emoji" onclick="reactToMessage('🙏')">🙏</span>
+                <i class="fas fa-chevron-down reaction-expand-btn" id="react-expand-btn" onclick="toggleExpandedReactions()"></i>
+            </div>
+
+            <div class="emoji-picker-embedded" id="reaction-full-picker">
+                <div class="emoji-nav">
+                    <button class="nav-btn active" data-target="recent" title="Recientes"><i class="far fa-clock"></i></button>
+                    <button class="nav-btn" data-target="smileys" title="Caras"><i class="far fa-smile"></i></button>
+                    <button class="nav-btn" data-target="animals" title="Animales"><i class="fas fa-cat"></i></button>
+                    <button class="nav-btn" data-target="food" title="Comida"><i class="fas fa-hamburger"></i></button>
+                    <button class="nav-btn" data-target="activity" title="Actividades"><i class="fas fa-futbol"></i></button>
+                    <button class="nav-btn" data-target="travel" title="Viajes"><i class="fas fa-car"></i></button>
+                    <button class="nav-btn" data-target="objects" title="Objetos"><i class="far fa-lightbulb"></i></button>
+                    <button class="nav-btn" data-target="symbols" title="Símbolos"><i class="fas fa-hashtag"></i></button>
+                    <button class="nav-btn" data-target="flags" title="Banderas"><i class="far fa-flag"></i></button>
+                </div>
+
+                <div class="emoji-search-container">
+                    <i class="fas fa-search"></i>
+                    <input type="text" class="emoji-search-input" placeholder="Buscar reacción..." autocomplete="off">
+                </div>
+
+                <div class="emoji-body" id="reaction-emoji-grid">
+                </div>
+            </div>
+        </div>
+
+        <div style="height: 1px; background: #17212b; margin: 5px 0;"></div>
+
+        <div class="ctx-items-list">
+            <div class="ctx-item" onclick="handleContextAction('reply')">
+                <i class="fas fa-reply"></i> Responder
+            </div>
+            <div class="ctx-item" onclick="handleContextAction('copy')">
+                <i class="far fa-copy"></i> Copiar texto
+            </div>
+            <div class="ctx-item" onclick="handleContextAction('edit')">
+                <i class="fas fa-pen"></i> Editar
+            </div>
+            <div class="ctx-item" onclick="handleContextAction('forward')">
+                <i class="fas fa-share"></i> Reenviar
+            </div>
+            <div class="ctx-item delete" onclick="handleContextAction('delete')">
+                <i class="far fa-trash-alt"></i> Eliminar
+            </div>
+        </div>
+    </div>
+
+    
+
+    
+    
+    
+
+
+
+    <script type="module" src="js/messages.module.js"></script>
+
+    <script src="js/messages.js"></script>
+</body></html>

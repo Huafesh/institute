@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contador Tragamonedas</title>
+    <link rel="icon" type="image/png" href="assets/Favicon.png">
+    <style>
+        body {
+            background-color: #1a1a1a;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Arial Black', sans-serif;
+        }
+
+        /* Contenedor principal del contador */
+        .slot-machine {
+            display: flex;
+            background: #333;
+            padding: 20px;
+            border-radius: 15px;
+            border: 4px solid #555;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(0, 0, 0, 0.8);
+            gap: 10px;
+        }
+
+        /* Ventana de cada dígito */
+        .digit-window {
+            background: linear-gradient(to bottom, #222, #444, #222);
+            height: 100px;
+            /* Altura de un solo número */
+            width: 70px;
+            overflow: hidden;
+            border-radius: 8px;
+            position: relative;
+            border: 2px solid #111;
+        }
+
+        /* Tira vertical que contiene los números del 0 al 9 */
+        .digit-strip {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: transform 2s cubic-bezier(0.17, 0.67, 0.12, 1.1);
+            /* Efecto elástico */
+        }
+
+        /* Cada número individual */
+        .digit-strip span {
+            height: 100px;
+            line-height: 100px;
+            font-size: 80px;
+            color: #ffcc00;
+            text-shadow: 0 0 10px rgba(255, 204, 0, 0.5);
+        }
+
+        button {
+            margin-top: 30px;
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            box-shadow: 0 5px #c0392b;
+            transition: all 0.1s;
+        }
+
+        button:active {
+            box-shadow: 0 2px #c0392b;
+            transform: translateY(3px);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="slot-machine" id="slot-machine">
+        <!-- Los dígitos se generarán aquí automáticamente -->
+    </div>
+
+    <button onclick="randomize()">¡GIRAR CONTADOR!</button>
+
+    <script>
+        const digitsCount = 5; // Cuántos números quieres mostrar
+        const slotMachine = document.getElementById('slot-machine');
+
+        // 1. Crear los elementos visuales
+        for (let i = 0; i < digitsCount; i++) {
+            const windowDiv = document.createElement('div');
+            windowDiv.className = 'digit-window';
+
+            const strip = document.createElement('div');
+            strip.className = 'digit-strip';
+            strip.id = `strip-${i}`;
+
+            // Llenar la tira con números del 0 al 9
+            for (let n = 0; n <= 9; n++) {
+                const span = document.createElement('span');
+                span.textContent = n;
+                strip.appendChild(span);
+            }
+
+            windowDiv.appendChild(strip);
+            slotMachine.appendChild(windowDiv);
+        }
+
+        // 2. Función para mover los números
+        function updateCounter(number) {
+            // Convertir número a string y rellenar con ceros a la izquierda
+            const numStr = number.toString().padStart(digitsCount, '0');
+
+            numStr.split('').forEach((digit, index) => {
+                const strip = document.getElementById(`strip-${index}`);
+                const position = digit * 100; // 100px es la altura de cada span
+
+                // Aplicar el movimiento
+                strip.style.transform = `translateY(-${position}px)`;
+
+                // Efecto de desenfoque temporal mientras gira
+                strip.style.filter = 'blur(2px)';
+                setTimeout(() => {
+                    strip.style.filter = 'blur(0px)';
+                }, 1500);
+            });
+        }
+
+        // Función para generar un número aleatorio y probar
+        function randomize() {
+            const max = Math.pow(10, digitsCount) - 1;
+            const randomNum = Math.floor(Math.random() * max);
+            updateCounter(randomNum);
+        }
+
+        // Iniciar con un valor por defecto
+        window.onload = () => updateCounter(0);
+
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,1210 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="assets/Favicon.png">
+    <title>Panel de Administración | Ceind Institute</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary-color: #003d80;
+            --secondary-color: #00a8ff;
+            --accent-color: #ffcc00;
+            --bg-color: #f4f7f6;
+            --sidebar-width: 280px;
+            --text-color: #444;
+            --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            --card-bg: #fff;
+            --title-color: #111;
+            --border-radius: 20px;
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        body.dark-mode {
+            --bg-color: #0f0f0f;
+            --text-color: #d0d0d0;
+            --card-bg: #1e1e1e;
+            --title-color: #f0f0f0;
+            --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Dark Mode Overrides */
+        body.dark-mode header h2 {
+            color: #fff;
+        }
+
+
+
+        body.dark-mode .stat-card,
+        body.dark-mode .admin-table-container {
+            border-color: #333;
+        }
+
+        body.dark-mode th {
+            background: rgba(255, 255, 255, 0.05);
+            border-bottom-color: #333;
+            color: #ddd;
+        }
+
+        body.dark-mode td {
+            border-bottom-color: #333;
+            color: #ccc;
+        }
+
+        body.dark-mode .stat-info h3 {
+            color: #fff;
+        }
+
+        body.dark-mode .admin-controls h3 {
+            color: #fff;
+        }
+
+        body.dark-mode header h2 {
+            color: #fff;
+        }
+
+        body.dark-mode .date-display {
+            color: #bbb;
+        }
+
+        body.dark-mode .stat-info p {
+            color: #d0d0d0;
+        }
+
+        /* View Transition for Theme Switch */
+        ::view-transition-old(root),
+        ::view-transition-new(root) {
+            animation: none;
+            mix-blend-mode: normal;
+        }
+
+        /* Icon Shapeshift Animation */
+        .theme-toggle i {
+            view-transition-name: theme-icon;
+        }
+
+        ::view-transition-old(theme-icon) {
+            animation: icon-out 0.5s cubic-bezier(0.76, 0, 0.24, 1) forwards;
+        }
+
+        ::view-transition-new(theme-icon) {
+            animation: icon-in 0.5s cubic-bezier(0.76, 0, 0.24, 1) forwards;
+        }
+
+        @keyframes icon-out {
+            0% {
+                transform: scale(1) rotate(0deg);
+                opacity: 1;
+            }
+
+            100% {
+                transform: scale(0) rotate(180deg);
+                opacity: 0;
+            }
+        }
+
+        @keyframes icon-in {
+            0% {
+                transform: scale(0) rotate(-180deg);
+                opacity: 0;
+            }
+
+            100% {
+                transform: scale(1) rotate(0deg);
+                opacity: 1;
+            }
+        }
+
+        /* Theme Toggle Button */
+        .theme-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.2rem;
+            color: #888;
+            transition: 0.3s;
+            display: inline-flex;
+            align-items: center;
+            padding: 5px;
+            margin-left: 15px;
+        }
+
+        .theme-toggle:hover {
+            color: var(--primary-color);
+            transform: scale(1.1);
+        }
+
+        body.dark-mode .theme-toggle {
+            color: #d0d0d0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-color);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* --- SIDEBAR --- */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--primary-color);
+            color: #fff;
+            position: fixed;
+            height: 100%;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 5px 0 15px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            /* AQUI ESTA LA LINEA DEBAJO DEL TITULO QUE PREGUNTASTE */
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .user-profile:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* ESTILO DEL CIRCULO DEL AVATAR PEQUEÑO (NINJA) */
+        .user-avatar-sm {
+            width: 45px;
+            height: 45px;
+            background: var(--secondary-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: white;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .user-info h4 {
+            font-size: 0.95rem;
+            margin: 0;
+        }
+
+        .user-info span {
+            font-size: 0.75rem;
+            opacity: 0.8;
+        }
+
+        .menu-items li {
+            list-style: none;
+            margin-bottom: 10px;
+        }
+
+        .menu-items a {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 12px 15px;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            border-radius: 8px;
+            transition: var(--transition);
+            font-size: 0.95rem;
+        }
+
+        .menu-items a:hover,
+        .menu-items a.active {
+            background: var(--secondary-color);
+            color: #fff;
+            transform: translateX(5px);
+        }
+
+        .logout {
+            margin-top: auto;
+            color: #ff6b6b;
+        }
+
+        .logout a:hover {
+            background: rgba(255, 107, 107, 0.2);
+            color: #ff6b6b;
+        }
+
+        /* --- MAIN CONTENT --- */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            flex: 1;
+            padding: 40px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        header h2 {
+            color: var(--text-color);
+        }
+
+        .date-display {
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        /* Admin Dashboard Styles */
+        .admin-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border: 1px solid #eee;
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: #fff;
+        }
+
+        .stat-info h3 {
+            font-size: 1.5rem;
+            margin: 0;
+            color: var(--primary-color);
+        }
+
+        .stat-info p {
+            font-size: 0.9rem;
+            color: #777;
+            margin: 0;
+        }
+
+        .admin-controls {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .btn-add {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .btn-add:hover {
+            background: #218838;
+        }
+
+        .admin-table-container {
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            overflow: hidden;
+            border: 1px solid #eee;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background: rgba(0, 0, 0, 0.02);
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        td {
+            color: #555;
+        }
+
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .status-certified {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-archived {
+            background: #e2e3e5;
+            color: #383d41;
+        }
+
+        .action-btn {
+            border: none;
+            background: none;
+            cursor: pointer;
+            padding: 5px;
+            transition: 0.2s;
+        }
+
+        .btn-delete {
+            color: #dc3545;
+        }
+
+        .btn-delete:hover {
+            transform: scale(1.2);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 70px;
+                padding: 15px 10px;
+            }
+
+            .brand span,
+            .user-info,
+            .menu-items span,
+            .logout span {
+                display: none;
+            }
+
+            .main-content {
+                margin-left: 70px;
+                padding: 20px;
+            }
+
+            .user-profile {
+                padding: 0;
+                background: none;
+                justify-content: center;
+            }
+
+            .menu-items a {
+                justify-content: center;
+            }
+        }
+
+        /* --- CUSTOM MODAL --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(8px);
+            z-index: 2000;
+            display: flex;
+            /* Always flex to keep layout ready */
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: opacity 0.4s ease, visibility 0.4s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+
+        /* Scale & Fade Animation */
+        .modal-card {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+            /* Start state */
+            transform: scale(0.9) translateY(20px);
+            opacity: 0;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s ease;
+            text-align: center;
+        }
+
+        .modal-overlay.active .modal-card {
+            transform: scale(1) translateY(0);
+            opacity: 1;
+        }
+
+        /* Input Error State */
+        .input-error {
+            border-color: #ff4757 !important;
+            animation: shake 0.5s ease-in-out;
+        }
+
+        .error-msg {
+            color: #ff4757;
+            font-size: 0.75rem;
+            text-align: left;
+            margin-top: 5px;
+            display: none;
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            20%,
+            60% {
+                transform: translateX(-5px);
+            }
+
+            40%,
+            80% {
+                transform: translateX(5px);
+            }
+        }
+
+        .modal-card h3 {
+            margin-bottom: 20px;
+            color: var(--title-color);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 0.85rem;
+            color: #777;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            outline: none;
+            transition: 0.3s;
+            background: var(--bg-color);
+            color: var(--text-color);
+        }
+
+        .form-group input:focus {
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 3px rgba(0, 168, 255, 0.1);
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 25px;
+        }
+
+        .modal-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        .btn-cancel {
+            background: #eee;
+            color: #555;
+        }
+
+        .btn-cancel:hover {
+            background: #ddd;
+        }
+
+        .btn-confirm {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-confirm:hover {
+            background: var(--secondary-color);
+        }
+
+        /* Dark Mode Modal */
+        body.dark-mode .modal-card {
+            border: 1px solid #333;
+        }
+
+        body.dark-mode .form-group input {
+            border-color: #333;
+            background: #252525;
+            color: #fff;
+        }
+
+        body.dark-mode .btn-cancel {
+            background: #333;
+            color: #ccc;
+        }
+
+        body.dark-mode .btn-cancel:hover {
+            background: #444;
+        }
+
+        /* Success Modal Details Box */
+        .success-box {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: left;
+            color: #333;
+            border: 1px solid #e9ecef;
+        }
+
+        .success-box strong {
+            color: #555;
+        }
+
+        body.dark-mode .success-box {
+            background: #252525;
+            border-color: #333;
+            color: #ddd;
+        }
+
+        body.dark-mode .success-box strong {
+            color: #fff;
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="sidebar">
+        <div class="brand">
+            <i class="fas fa-graduation-cap"></i> <span>Ceind</span>
+        </div>
+
+        <div class="user-profile clickable-profile" onclick="window.location.href='profile.html'">
+            <div class="user-avatar-sm"></div>
+            <div class="user-info">
+                <h4 id="sidebar-user-name">Cargando...</h4>
+                <span id="sidebar-user-subtitle">...</span>
+            </div>
+        </div>
+
+        <ul class="menu-items">
+            <li><a href="institution.html"><i class="fas fa-university"></i> <span data-i18n="menu_institution">Página
+                        de la institución</span></a></li>
+            <li><a href="activity.html"><i class="fas fa-globe"></i> <span
+                        data-i18n="menu_activity">Actividad</span></a></li>
+            <li><a href="dashboard.html"><i class="fas fa-book"></i> <span data-i18n="menu_courses">Mis
+                        Cursos</span></a></li>
+            <li id="admin-link"><a href="admin_panel.html" class="active"><i class="fas fa-th-large"></i> <span
+                        data-i18n="menu_panel">Panel de
+                        Control</span></a></li>
+            <li><a href="schedule.html"><i class="fas fa-calendar-alt"></i> <span
+                        data-i18n="menu_schedule">Horario</span></a></li>
+            <li><a href="grades.html"><i class="fas fa-chart-line"></i> <span
+                        data-i18n="menu_grades">Calificaciones</span></a></li>
+            <li><a href="messages.html"><i class="fas fa-paper-plane"></i> <span
+                        data-i18n="menu_messages">Mensajes</span> <span id="msg-counter-badge"
+                        style="display:none; background:red; color:white; padding:2px 6px; border-radius:10px; font-size:0.7rem; margin-left:auto;">0</span></a>
+            </li>
+        </ul>
+
+        <ul class="menu-items logout">
+            <li><a href="index.html" onclick="localStorage.removeItem('isLoggedIn');"><i
+                        class="fas fa-sign-out-alt"></i>
+                    <span data-i18n="menu_logout">Cerrar Sesión</span></a></li>
+        </ul>
+    </nav>
+
+    <main class="main-content">
+        <header>
+            <div>
+                <h2>Panel de Administración</h2>
+                <p class="date-display">Gestiona los alumnos y certificados.</p>
+            </div>
+            <div>
+
+                <button id="theme-toggle" class="theme-toggle" title="Cambiar tema">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Admin View -->
+        <div id="admin-view">
+            <div class="admin-stats">
+                <div class="stat-card">
+                    <div class="stat-icon" style="background:#00a8ff"><i class="fas fa-users"></i></div>
+                    <div class="stat-info">
+                        <h3>142</h3>
+                        <p>Total Alumnos</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="background:#28a745"><i class="fas fa-certificate"></i></div>
+                    <div class="stat-info">
+                        <h3>85</h3>
+                        <p>Certificados</p>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="admin-controls">
+                <h3>Gestión de Alumnos</h3>
+                <button class="btn-add" onclick="openModal()"><i class="fas fa-plus"></i> Nuevo Alumno</button>
+            </div>
+
+            <div class="admin-table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Email</th>
+                            <th>Estado</th>
+                            <th>Notas</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="student-table-body">
+                        <tr data-id="static-1">
+                            <td>Roberto Gomez</td>
+                            <td>roberto@mail.com</td>
+                            <td><span class="status-badge status-certified">Certificado</span></td>
+                            <td>18.5</td>
+                            <td>
+                                <button class="action-btn btn-delete" onclick="window.deleteUser('static-1')"><i
+                                        class="fas fa-trash"></i></button>
+                            </td>
+                        </tr>
+                        <tr data-id="static-2">
+                            <td>Ana Torres</td>
+                            <td>ana.t@mail.com</td>
+                            <td><span class="status-badge status-pending">En Curso</span></td>
+                            <td>-</td>
+                            <td>
+                                <button class="action-btn btn-delete" onclick="window.deleteUser('static-2')"><i
+                                        class="fas fa-trash"></i></button>
+                            </td>
+                        </tr>
+                        <tr data-id="static-3">
+                            <td>Luis Castillo</td>
+                            <td>luis.c@mail.com</td>
+                            <td><span class="status-badge status-certified">Certificado</span></td>
+                            <td>19.0</td>
+                            <td>
+                                <button class="action-btn btn-delete" onclick="window.deleteUser('static-3')"><i
+                                        class="fas fa-trash"></i></button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- Add Student Modal -->
+    <div class="modal-overlay" id="addStudentModal">
+        <div class="modal-card">
+            <h3><i class="fas fa-user-plus" style="color: var(--secondary-color);"></i> Nuevo Alumno</h3>
+            <div class="form-group">
+                <label>Nombre Completo</label>
+                <input type="text" id="newStudentName" placeholder="Ej. Juan Pérez">
+            </div>
+            <div class="form-group">
+                <label>Correo Electrónico</label>
+                <input type="email" id="newStudentEmail" placeholder="Ej. juan@mail.com">
+                <span class="error-msg" id="emailError">Por favor ingresa un correo válido.</span>
+            </div>
+            <div class="form-group">
+                <label>Contraseña Provisional</label>
+                <div style="position: relative;">
+                    <input type="password" id="newStudentPassword" placeholder="••••••••" style="padding-right: 40px;">
+                    <i class="fas fa-eye" id="toggleModalPassword"
+                        style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #888;"></i>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="modal-btn btn-cancel" onclick="closeModal()">Cancelar</button>
+                <button class="modal-btn btn-confirm" onclick="saveStudent()">Guardar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Delete Confirmation Modal -->
+    <div class="modal-overlay" id="deleteModal">
+        <div class="modal-card">
+            <h3><i class="fas fa-exclamation-triangle" style="color: #ff4757;"></i> Quiere eliminar al alumno</h3>
+            <p style="color: #777; margin-bottom: 20px;">
+                <span class="d-none">¿Estás seguro?</span>
+                Esta acción eliminará los datos del alumno del panel.
+            </p>
+            <div
+                style="background: #fff3cd; color: #856404; padding: 10px; border-radius: 6px; font-size: 0.8rem; margin-bottom: 20px; text-align: left; border: 1px solid #ffeeba;">
+                <i class="fas fa-exclamation-circle"></i> <strong>Nota Importante:</strong>
+                Por seguridad de Google, el correo permanecerá registrado. Si deseas reutilizarlo, debes eliminar el
+                usuario desde la <strong>Consola de Firebase > Authentication</strong>.
+            </div>
+            <div class="modal-actions">
+                <button class="modal-btn btn-cancel" onclick="closeDeleteModal()">No</button>
+                <button class="modal-btn btn-confirm" style="background: #ff4757;" id="confirmDeleteBtn"
+                    title="Elimina al alumno por completo del sistema, pero sus datos quedan guardados">Si</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Certify Confirmation Modal -->
+    <div class="modal-overlay" id="certifyModal">
+        <div class="modal-card">
+            <h3><i class="fas fa-certificate" style="color: #ffc107;"></i> <span id="certifyTitle">Emitir
+                    Certificado</span></h3>
+            <p style="color: #777; margin-bottom: 20px;">
+                <span id="certifyMessage">¿Estás seguro de que deseas emitir el certificado para este alumno?</span>
+            </p>
+            <div class="modal-actions">
+                <button class="modal-btn btn-cancel" onclick="closeCertifyModal()">Cancelar</button>
+                <button class="modal-btn btn-confirm" id="confirmCertifyBtn"
+                    onclick="confirmCertificateAction()">Confirmar</button>
+            </div>
+        </div>
+
+        <!-- Success Modal -->
+        <div class="modal-overlay" id="successModal">
+            <div class="modal-card" style="border-top: 5px solid #28a745;">
+                <div
+                    style="width: 60px; height: 60px; background: rgba(40, 167, 69, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px;">
+                    <i class="fas fa-check" style="font-size: 2rem; color: #28a745;"></i>
+                </div>
+                <h3 style="color: #28a745; margin-bottom: 10px;">¡Usuario Creado!</h3>
+                <div class="success-box">
+                    <p style="margin: 5px 0; font-size: 0.9rem;"><strong>Alumno:</strong> <span
+                            id="successName">Name</span>
+                    </p>
+                    <p style="margin: 5px 0; font-size: 0.9rem;"><strong>Email:</strong> <span
+                            id="successEmail">Email</span>
+                    </p>
+                    <p style="margin: 5px 0; font-size: 0.9rem;"><strong>Contraseña:</strong> <span
+                            id="successPassword">****</span></p>
+                    <p style="margin-top: 10px; font-size: 0.8rem; opacity: 0.8;"><i class="fas fa-info-circle"></i>
+                        Comparte
+                        estas credenciales con el alumno.</p>
+                </div>
+                <button class="modal-btn btn-confirm" onclick="closeSuccessModal()"
+                    style="background: #28a745; width: 100%;">Aceptar</button>
+            </div>
+        </div>
+
+        <!-- UI & Logic (Real Firebase) -->
+        <script src="js/translations.js"></script>
+
+        <!-- Firebase Dependencies (Compat) -->
+        <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+        <script src="js/firebase-config.js"></script> <!-- Includes createStudentAccount helper -->
+
+        <script>
+            // --- 1. Dark Mode Logic handled by js/theme.js ---
+
+            // --- 2. Auth Check & Admin Verification ---
+            document.addEventListener('DOMContentLoaded', () => {
+                // Check if user is logged in
+                auth.onAuthStateChanged(async (user) => {
+                    if (user) {
+                        // Check if current user is admin (optional security check on frontend)
+                        const docSnap = await db.collection('users').doc(user.uid).get();
+                        if (docSnap.exists && docSnap.data().role === 'admin') {
+                            console.log("Admin Logged In");
+                            loadRealUsers();
+
+                            // Update sidebar avatar
+                            // sidebarAvatar handled by profile-data.js
+                        } else {
+                            // Redirect if not admin
+                            console.warn("Acceso denegado: Usuario no es administrador.");
+                            window.location.href = 'dashboard.html';
+                        }
+                    } else {
+                        // Not logged in
+                        window.location.href = 'login.html';
+                    }
+                });
+            });
+
+            // --- 3. View Logic (Load Users) ---
+            function loadRealUsers() {
+                const tableBody = document.getElementById('student-table-body');
+                tableBody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Cargando datos...</td></tr>';
+
+                // Real-time listener
+                db.collection("users").orderBy("createdAt", "desc").onSnapshot((querySnapshot) => {
+                    let html = '';
+                    let count = 0;
+                    let certifiedCount = 0;
+
+                    if (querySnapshot.empty) {
+                        tableBody.innerHTML = '<tr><td colspan="5" style="text-align:center;">No hay usuarios registrados.</td></tr>';
+                        return;
+                    }
+
+                    querySnapshot.forEach((doc) => {
+                        const data = doc.data();
+
+                        // FIX: COMPLETELY HIDE Admins/Teachers from the table
+                        if (data.role === 'admin' || data.role === 'teacher') return;
+
+                        let statusClass = 'status-pending';
+                        let statusText = 'Estudiante';
+
+                        if (data.status === 'archived') {
+                            statusClass = 'status-archived';
+                            statusText = 'Inactivo';
+                        } else {
+                            statusClass = 'status-pending';
+                            statusText = 'Estudiante';
+
+                            // Only Students can have certificates counted
+                            if (data.certificateIssued) {
+                                statusClass = 'status-certified';
+                                statusText = 'Certificado';
+                                certifiedCount++;
+                            }
+                        }
+                        // Don't show grades for admins usually, or defaults
+                        const grade = data.gradeAverage || '-';
+
+                        // Disable Delete for Admins (Redundant now since they are hidden, but good for safety)
+                        let actionHtml = '';
+                        if (data.role === 'admin') {
+                            actionHtml = `<span style="color:#aaa; font-size: 0.8rem;"><i class="fas fa-shield-alt"></i> Protegido</span>`;
+                        } else {
+                            // Dynamic Certify Button state
+                            const isCertified = data.certificateIssued === true;
+                            const certifyBtnTitle = isCertified ? "Revocar Certificado" : "Emitir Certificado";
+                            const certifyBtnIcon = isCertified ? "fa-times-circle" : "fa-graduation-cap";
+                            const certifyBtnColor = isCertified ? "#ffc107" : "#28a745"; // Yellow to revoke, Green to award
+
+                            actionHtml = `
+                            <button class="action-btn" onclick="window.toggleCertificate('${doc.id}', ${isCertified})" title="${certifyBtnTitle}" style="color: ${certifyBtnColor}; margin-right: 5px;">
+                                <i class="fas ${certifyBtnIcon}"></i>
+                            </button>
+                            <button class="action-btn btn-delete" onclick="window.prepareDelete('${doc.id}')" title="Eliminar">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        `;
+                        }
+
+                        // Only count actual Students for the "Total Alumnos" stat
+                        if (data.role !== 'admin' && data.role !== 'teacher') {
+                            count++;
+                        }
+
+                        html += `
+                        <tr data-id="${doc.id}">
+                            <td>
+                                <div style="display:flex; align-items:center; gap:10px;">
+                                    ${data.photoURL
+                                ? `<img src="${data.photoURL}" style="width:35px; height:35px; border-radius:50%; object-fit:cover;">`
+                                : `<div class="user-avatar-sm" style="width:35px; height:35px; font-size:0.9rem;">${(data.displayName || 'U').charAt(0)}</div>`
+                            }
+                                    <span style="font-weight: 500; color: var(--text-color);">${data.displayName || 'Sin Nombre'}</span>
+                                </div>
+                            </td>
+                            <td>${data.email}</td>
+                            <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                            <td>${grade}</td>
+                            <td>
+                                ${actionHtml}
+                            </td>
+                        </tr>
+                    `;
+                    });
+
+                    tableBody.innerHTML = html;
+
+                    // Update stats counter
+                    const statHeader = document.querySelector('.stat-card:nth-child(1) h3');
+                    if (statHeader) statHeader.innerText = count;
+
+                    // Update Certified custom counter
+                    const certifiedHeader = document.querySelector('.stat-card:nth-child(2) h3');
+                    if (certifiedHeader) certifiedHeader.innerText = certifiedCount;
+
+                }, (error) => {
+                    console.error("Error getting documents: ", error);
+                    tableBody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:red;">Error cargando datos. Revise permisos.</td></tr>';
+                });
+            }
+
+            // --- 4. Add Student Logic ---
+            window.openModal = function () {
+                document.getElementById('addStudentModal').classList.add('active');
+                // Generate auto-password suggestion? For now empty.
+            }
+
+            window.closeModal = function () {
+                document.getElementById('addStudentModal').classList.remove('active');
+                document.getElementById('newStudentName').value = '';
+                document.getElementById('newStudentEmail').value = '';
+                document.getElementById('emailError').style.display = 'none';
+            }
+
+            window.saveStudent = async function () {
+                const name = document.getElementById('newStudentName').value.trim();
+                const email = document.getElementById('newStudentEmail').value.trim();
+                const password = document.getElementById('newStudentPassword').value;
+                const errSpan = document.getElementById('emailError');
+                const saveBtn = document.querySelector('.btn-confirm');
+
+                if (!name || !email || !password) {
+                    alert("Completa todos los campos (Nombre, Email, Contraseña)");
+                    return;
+                }
+                if (!email.includes('@')) {
+                    errSpan.style.display = 'block';
+                    return;
+                } else {
+                    errSpan.style.display = 'none';
+                }
+
+                if (password.length < 6) {
+                    alert("La contraseña debe tener al menos 6 caracteres.");
+                    return;
+                }
+
+                try {
+                    saveBtn.innerText = "Guardando...";
+                    saveBtn.disabled = true;
+
+                    // Use our helper from firebase-config.js
+                    await createStudentAccount(email, password, name);
+
+                    // Success Custom Modal
+                    closeModal();
+                    showSuccessModal(name, email, password);
+
+                } catch (error) {
+                    console.error("Error creating user:", error);
+                    if (error.code === 'auth/email-already-in-use') {
+                        alert("Ese correo ya está registrado.");
+                    } else {
+                        alert("Error al crear usuario: " + error.message);
+                    }
+                } finally {
+                    saveBtn.innerText = "Guardar";
+                    saveBtn.disabled = false;
+                }
+            }
+
+            // Toggle Password Logic for Modal
+            document.getElementById('toggleModalPassword').addEventListener('click', function () {
+                const input = document.getElementById('newStudentPassword');
+                if (input.type === "password") {
+                    input.type = "text";
+                    this.classList.remove('fa-eye');
+                    this.classList.add('fa-eye-slash');
+                } else {
+                    input.type = "password";
+                    this.classList.remove('fa-eye-slash');
+                    this.classList.add('fa-eye');
+                }
+            });
+
+            // --- 5. Delete Logic ---
+            let deleteTargetId = null;
+
+            window.prepareDelete = function (id) {
+                deleteTargetId = id;
+                document.getElementById('deleteModal').classList.add('active');
+            }
+
+            window.closeDeleteModal = function () {
+                document.getElementById('deleteModal').classList.remove('active');
+                deleteTargetId = null;
+            }
+
+            document.getElementById('confirmDeleteBtn').addEventListener('click', async () => {
+                if (!deleteTargetId) return;
+
+                try {
+                    // Soft Delete (Archive)
+                    await db.collection('users').doc(deleteTargetId).update({
+                        status: 'archived'
+                    });
+
+                    // Note: We are keeping the doc for Ranking purposes, effectively "hiding" access but keeping data.
+
+                    closeDeleteModal();
+                    // Real-time listener will update the table automatically!
+
+                    // Note: We cannot delete from Authentication SDK-side easily without Cloud Functions.
+                    // We will just delete the database record, which effectively "hides" them from the app logic.
+                    // Or we could flag them as { status: 'deleted' }.
+                    // For now, hard delete from DB is sufficient for the view.
+
+                    closeDeleteModal();
+                    // Real-time listener will update the table automatically!
+
+                } catch (error) {
+                    console.error("Error deleting:", error);
+                    alert("No se pudo eliminar: " + error.message);
+                }
+            });
+
+            // --- 6. Certificate Logic ---
+            // Global state for certificate action
+            let pendingCertDetails = { userId: null, newStatus: null };
+
+            window.toggleCertificate = function (userId, currentStatus) {
+                pendingCertDetails.userId = userId;
+                pendingCertDetails.newStatus = !currentStatus;
+
+                const modal = document.getElementById('certifyModal');
+                const title = document.getElementById('certifyTitle');
+                const msg = document.getElementById('certifyMessage');
+                const btn = document.getElementById('confirmCertifyBtn');
+
+                // Customize Modal based on action
+                if (pendingCertDetails.newStatus) {
+                    title.innerText = "Emitir Certificado";
+                    msg.innerText = "¿Estás seguro de que deseas emitir el certificado para este alumno?";
+                    btn.style.background = "#28a745"; // Green
+                    btn.style.color = "#fff";
+                    btn.innerText = "Emitir";
+                } else {
+                    title.innerText = "Revocar Certificado";
+                    msg.innerText = "¿Estás seguro de que deseas revocar el certificado de este alumno?";
+                    btn.style.background = "#ffc107"; // Yellow
+                    btn.style.color = "#333"; // Better contrast
+                    btn.innerText = "Revocar";
+                }
+
+                modal.classList.add('active');
+            };
+
+            window.closeCertifyModal = function () {
+                document.getElementById('certifyModal').classList.remove('active');
+                pendingCertDetails = { userId: null, newStatus: null };
+            }
+
+            window.confirmCertificateAction = async function () {
+                if (!pendingCertDetails.userId) return;
+
+                const { userId, newStatus } = pendingCertDetails;
+                const btn = document.getElementById('confirmCertifyBtn');
+
+                // Optimistic update UX
+                btn.innerText = "Procesando...";
+                btn.disabled = true;
+
+                try {
+                    await db.collection('users').doc(userId).update({
+                        certificateIssued: newStatus
+                    });
+                    closeCertifyModal();
+                } catch (error) {
+                    console.error("Error updating certificate:", error);
+                    alert("Error al actualizar certificado: " + error.message);
+                    closeCertifyModal();
+                } finally {
+                    btn.disabled = false;
+                }
+            }
+
+            // --- Close Modal on Outside Click ---
+            document.querySelectorAll('.modal-overlay').forEach(modal => {
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        modal.classList.remove('active');
+                    }
+                });
+            });
+
+            // --- Success Modal Logic ---
+            function showSuccessModal(name, email, password) {
+                document.getElementById('successName').innerText = name;
+                document.getElementById('successEmail').innerText = email;
+                document.getElementById('successPassword').innerText = password;
+                document.getElementById('successModal').classList.add('active');
+            }
+
+            function closeSuccessModal() {
+                document.getElementById('successModal').classList.remove('active');
+                // Clean up password from view for security
+                document.getElementById('successPassword').innerText = '****';
+            }
+
+
+        </script>
+        <!-- Firebase Dependencies (Compat) -->
+        <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+        <script src="js/firebase-config.js"></script>
+        <script src="js/profile-data.js"></script>
+
+        <script src="js/logout_modal.js"></script>
+        <script src="js/theme.js"></script>
+        <script src="js/notifications.js"></script>
+</body>
+
+</html>

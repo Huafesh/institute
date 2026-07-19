@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rescate de Admin - Ceind</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            background: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #2ecc71;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        button:hover {
+            background: #27ae60;
+        }
+
+        .log {
+            margin-top: 15px;
+            font-size: 0.9rem;
+            color: #555;
+            background: #eee;
+            padding: 10px;
+            border-radius: 4px;
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="card">
+        <h2>🛠️ Restaurar Acceso Admin</h2>
+        <p>Ingresa el correo y contraseña que quieres usar como Administrador.</p>
+
+        <input type="text" id="name" placeholder="Nombre Completo (ej: Admin Principal)">
+        <input type="email" id="email" placeholder="Correo (ej: admin@ceind.com)">
+        <input type="password" id="password" placeholder="Contraseña (min 6 caracteres)">
+        <button onclick="restoreAdmin()">✨ Convertir en Admin</button>
+
+        <div id="log" class="log"></div>
+    </div>
+
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="js/firebase-config.js"></script>
+
+    <script>
+        const logDiv = document.getElementById('log');
+        function log(msg, color = 'black') {
+            logDiv.style.display = 'block';
+            logDiv.innerHTML += `<div style="color:${color}; margin-bottom:5px;">${msg}</div>`;
+        }
+
+        async function restoreAdmin() {
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            if (!email || !password || !name) return alert("Ingresa nombre, correo y contraseña");
+
+            log("🔄 Procesando...", "blue");
+
+            try {
+                let user;
+
+                // 1. Try to login
+                try {
+                    const cred = await auth.signInWithEmailAndPassword(email, password);
+                    user = cred.user;
+                    log("✅ Usuario encontrado en Auth.", "green");
+                } catch (e) {
+                    if (e.code === 'auth/user-not-found') {
+                        log("⚠️ Usuario no existe. Creándolo...", "orange");
+                        const cred = await auth.createUserWithEmailAndPassword(email, password);
+                        user = cred.user;
+                        log("✅ Usuario CREADO exitosamente.", "green");
+                    } else {
+                        throw e;
+                    }
+                }
+
+                // 2. Update Auth Profile
+                if (name) {
+                    await user.updateProfile({ displayName: name });
+                    log("✅ Perfil de Auth actualizado.", "green");
+                }
+
+                // 3. Force Update Firestore
+                log("🔄 Asignando permisos de Admin...", "blue");
+                await db.collection('users').doc(user.uid).set({
+                    email: email,
+                    role: 'admin',      // FORCE ADMIN
+                    status: 'active',   // FORCE ACTIVE (Un-archive)
+                    displayName: name || user.displayName || 'Admin',
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                }, { merge: true });
+
+                log("🎉 ¡ÉXITO! Ahora eres Admin.", "green");
+                log("👉 <a href='admin_panel.html'>Ir al Panel de Admin</a>", "blue");
+
+            } catch (error) {
+                console.error(error);
+                log("❌ Error: " + error.message, "red");
+            }
+        }
+    </script>
+</body>
+
+</html>

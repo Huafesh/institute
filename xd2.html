@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Oro Líquido Goteando</title>
+    <link rel="icon" type="image/png" href="assets/Favicon.png">
+    <style>
+        body {
+            margin: 0;
+            background: #050505;
+            overflow: hidden;
+        }
+
+        /* Barra superior que "contiene" el metal */
+        .top-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 8px;
+            background: linear-gradient(to bottom, #d4af37, #f9e27d);
+            z-index: 10;
+            box-shadow: 0 2px 15px rgba(212, 175, 55, 0.5);
+        }
+
+        .container {
+            filter: url('#gold-liquid');
+            width: 100vw;
+            height: 100vh;
+        }
+
+        canvas {
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="top-bar"></div>
+    <div class="container">
+        <canvas id="canvas"></canvas>
+    </div>
+
+    <!-- Filtro SVG para efecto "Gooey" y material metálico de Oro -->
+    <svg xmlns="www.w3.org" style="display:none;">
+        <defs>
+            <filter id="gold-liquid">
+                <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
+                <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 20 -10"
+                    result="goo" />
+                <!-- Simulación de brillo metálico (Oro) -->
+                <feSpecularLighting in="goo" surfaceScale="5" specularConstant="0.8" specularExponent="35"
+                    lighting-color="#ffe680" result="specular">
+                    <fePointLight x="50%" y="-50" z="150" />
+                </feSpecularLighting>
+                <feComposite in="specular" in2="goo" operator="in" result="specularOut" />
+                <feComposite in="goo" in2="specularOut" operator="arithmetic" k1="0" k2="1" k3="0.7" k4="0" />
+            </filter>
+        </defs>
+    </svg>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        class GoldDrop {
+            constructor(x, y, size) {
+                this.x = x;
+                this.y = y;
+                this.size = size;
+                this.vy = Math.random() * 2 + 1; // Velocidad de caída
+                this.onFloor = false;
+                this.life = 1.0;
+            }
+
+            update() {
+                if (!this.onFloor) {
+                    this.y += this.vy;
+                    this.vy += 0.1; // Gravedad
+                    if (this.y >= canvas.height - 20) {
+                        this.y = canvas.height - 10;
+                        this.onFloor = true;
+                    }
+                } else {
+                    this.life -= 0.003; // Desvanecimiento lento al chocar
+                    this.size += 0.15;  // Se expande como mancha
+                }
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                // Color base oro: #D4AF37 con transparencia
+                ctx.fillStyle = `rgba(212, 175, 55, ${this.life})`;
+                ctx.fill();
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Generar gotas desde el límite de la barra superior
+            if (Math.random() < 0.08) {
+                particles.push(new GoldDrop(Math.random() * canvas.width, 10, Math.random() * 12 + 8));
+            }
+
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].update();
+                particles[i].draw();
+                if (particles[i].life <= 0) {
+                    particles.splice(i, 1);
+                    i--;
+                }
+            }
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+    </script>
+</body>
+
+</html>

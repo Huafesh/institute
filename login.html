@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión | Ceind Institute</title>
+    <link rel="icon" type="image/png" href="assets/Favicon.png">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+        /* Reutilizamos las variables del Index para mantener la marca */
+        :root {
+            --primary-color: #003d80;
+            --secondary-color: #00a8ff;
+            --white: #ffffff;
+            --text-color: #555;
+            --bg-color: #f4f7f6;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --card-bg: #ffffff;
+            --title-color: #003d80;
+        }
+
+        body.dark-mode {
+            --bg-color: #0f0f0f;
+            --card-bg: #1e1e1e;
+            --text-color: #d0d0d0;
+            --text-color: #d0d0d0;
+            /* --white remains #ffffff to ensure text on dark backgrounds stays readable */
+            /* Remap white to card-bg for container background */
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            /* Keep primary color or adjust if needed */
+        }
+
+        /* Specific overrides for Dark Mode */
+        body.dark-mode .login-container {
+            background: var(--card-bg);
+        }
+
+        body.dark-mode input {
+            background: #2c2c2c;
+            border-color: #444;
+            color: #fff;
+        }
+
+        body.dark-mode .form-header h3 {
+            color: #fff;
+        }
+
+        body.dark-mode .back-link a {
+            color: #ccc;
+        }
+
+        body.dark-mode .back-link a:hover {
+            color: var(--secondary-color);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-color);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            /* Fondo sutil */
+            background-image: linear-gradient(rgba(0, 61, 128, 0.05), rgba(0, 61, 128, 0.05)), url('https://www.transparenttextures.com/patterns/cubes.png');
+        }
+
+        .login-container {
+            background: var(--white);
+            width: 100%;
+            max-width: 900px;
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            display: flex;
+            min-height: 600px;
+        }
+
+        /* Lado Izquierdo (Imagen/Brand) */
+        .login-brand {
+            flex: 1;
+            background: linear-gradient(135deg, var(--primary-color), #002a5c);
+            color: var(--white);
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Decoración de fondo */
+        .login-brand::before {
+            content: '';
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 50%;
+            top: -50px;
+            left: -50px;
+        }
+
+        .login-brand::after {
+            content: '';
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 50%;
+            bottom: -30px;
+            right: -30px;
+        }
+
+        .login-brand i {
+            font-size: 5rem;
+            margin-bottom: 20px;
+        }
+
+        .login-brand h2 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .login-brand p {
+            opacity: 0.8;
+            font-weight: 300;
+        }
+
+        /* Lado Derecho (Formulario) */
+        .login-form {
+            flex: 1;
+            padding: 50px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .form-header {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .form-header h3 {
+            font-size: 1.8rem;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+
+        .form-header p {
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-color);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-wrapper i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #aaa;
+            transition: 0.3s;
+        }
+
+        .input-wrapper .toggle-password {
+            left: auto;
+            right: 15px;
+            cursor: pointer;
+        }
+
+        .input-wrapper .toggle-password:hover {
+            color: var(--secondary-color);
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px 45px 12px 45px;
+            /* Adjust padding-right for the new icon */
+            /* Espacio para el icono */
+            border: 2px solid #eee;
+            border-radius: 8px;
+            font-family: inherit;
+            transition: all 0.3s;
+            outline: none;
+        }
+
+        .input-group input:focus {
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 3px rgba(0, 168, 255, 0.1);
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            background: var(--primary-color);
+            color: #ffffff;
+            /* Force white text */
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+
+        .btn-submit:hover {
+            background: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 168, 255, 0.3);
+        }
+
+        .forgot-password {
+            text-align: right;
+            margin-bottom: 20px;
+        }
+
+        .forgot-password a {
+            color: var(--secondary-color);
+            font-size: 0.85rem;
+            text-decoration: none;
+        }
+
+        .back-link {
+            text-align: center;
+            margin-top: 25px;
+            font-size: 0.9rem;
+        }
+
+        .back-link a {
+            color: var(--text-color);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: color 0.3s;
+        }
+
+        .back-link a:hover {
+            color: var(--primary-color);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .login-container {
+                flex-direction: column;
+                margin: 20px;
+                height: auto;
+                min-height: auto;
+            }
+
+            .login-brand {
+                padding: 30px;
+            }
+
+            .login-form {
+                padding: 30px;
+            }
+        }
+    </style>
+    <script>
+        // Apply theme immediately to prevent flash
+        (function () {
+            const savedTheme = localStorage.getItem('theme');
+            const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            if (savedTheme === 'dark' || (!savedTheme && systemPrefersDark)) {
+                document.documentElement.classList.add('dark-mode');
+                // Only adding to html is enough usually if CSS uses :root or body, 
+                // but let's add to both to be safe or just HTML if that's where the var is.
+                // Our CSS targets body.dark-mode, so we need it there.
+                // But body might not exist yet if script is in head?
+                // Actually document.body is null in head.
+                // We should add to documentElement and make sure CSS targets html.dark-mode OR body.dark-mode
+                // OR wait for DOMContentLoaded.
+                // To avoid flash, adding to HTML is best.
+                document.documentElement.classList.add('dark-mode');
+            }
+        })();
+
+        // Helper to move class to body when ready (since existing CSS uses body.dark-mode)
+        document.addEventListener('DOMContentLoaded', () => {
+            if (document.documentElement.classList.contains('dark-mode')) {
+                document.body.classList.add('dark-mode');
+            }
+        });
+    </script>
+</head>
+
+<body>
+    <!-- Soft Toast Container -->
+    <div id="soft-toast" class="soft-toast">
+        <div class="toast-content">
+            <i class="fas fa-exclamation-circle toast-icon"></i>
+            <span id="toast-message">Mensaje de notificación</span>
+        </div>
+    </div>
+
+    <style>
+        /* Soft Toast Styles */
+        .soft-toast {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(8px);
+            /* The requested blur */
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.4s ease, visibility 0.4s ease;
+        }
+
+        .soft-toast.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .toast-content {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transform: scale(0.9);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border-left: 5px solid #ff4757;
+            /* Default error color */
+        }
+
+        .soft-toast.active .toast-content {
+            transform: scale(1);
+        }
+
+        .toast-content span {
+            font-weight: 500;
+            color: #333;
+            font-size: 1rem;
+        }
+
+        .toast-icon {
+            font-size: 1.5rem;
+            color: #ff4757;
+        }
+
+        /* Dark Mode support for toast */
+        body.dark-mode .toast-content {
+            background: #252525;
+            color: #fff;
+        }
+
+        body.dark-mode .toast-content span {
+            color: #fff;
+        }
+    </style>
+
+    <div class="login-container">
+        <div class="login-brand">
+            <i class="fas fa-graduation-cap"></i>
+            <h2>Ceind Institute</h2>
+            <p>Bienvenido de nuevo a tu plataforma de aprendizaje.</p>
+        </div>
+
+        <div class="login-form">
+            <div class="form-header">
+                <h3>Iniciar Sesión</h3>
+                <p>Ingresa tus credenciales para acceder al aula.</p>
+            </div>
+
+            <form onsubmit="handleLogin(event)">
+                <div class="input-group">
+                    <label for="email">Correo Electrónico</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" id="email" placeholder="ejemplo@correo.com" required>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="password">Contraseña</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="password" placeholder="••••••••" required>
+                        <i class="fas fa-eye toggle-password" id="togglePassword"></i>
+                    </div>
+                </div>
+
+                <div class="forgot-password">
+                    <a href="forgot_password.html">¿Olvidaste tu contraseña?</a>
+                </div>
+
+                <button type="submit" class="btn-submit">Ingresar al Aula</button>
+            </form>
+
+            <div class="back-link">
+                <a href="index.html"><i class="fas fa-arrow-left"></i> Volver al inicio</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase Dependencies (Compat) -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics-compat.js"></script>
+
+    <!-- Config -->
+    <script src="js/firebase-config.js"></script>
+
+    <script>
+        // Use Global Theme Logic if available, otherwise fallback is already applied in head.
+
+
+        // Show/Hide Password Logic
+        const togglePassword = document.querySelector('#togglePassword');
+        const password = document.querySelector('#password');
+
+        if (togglePassword) {
+            togglePassword.addEventListener('click', function (e) {
+                // toggle the type attribute
+                const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+                password.setAttribute('type', type);
+
+                // toggle the eye slash icon
+                this.classList.toggle('fa-eye-slash');
+                this.classList.toggle('fa-eye');
+            });
+        }
+
+        window.showSoftToast = function (message, type = 'error') {
+            const toast = document.getElementById('soft-toast');
+            const msgEl = document.getElementById('toast-message');
+
+            msgEl.innerText = message;
+            toast.classList.add('active');
+
+            // Auto hide after 3.5 seconds
+            setTimeout(() => {
+                toast.classList.remove('active');
+            }, 3500);
+        };
+
+        window.handleLogin = async function (event) {
+            event.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const btn = document.querySelector('.btn-submit');
+            const originalText = btn.innerText;
+
+            try {
+                btn.innerText = "Verificando...";
+                btn.disabled = true;
+
+                // 1. Firebase Auth Sign In (Compat)
+                const userCredential = await auth.signInWithEmailAndPassword(email, password);
+                const user = userCredential.user;
+
+                // 2. Clear legacy local storage just in case
+                localStorage.removeItem('role');
+
+                // 3. Check Role in Firestore (users collection)
+                const docRef = db.collection("users").doc(user.uid);
+                const docSnap = await docRef.get();
+
+                // Set Session Flag
+                localStorage.setItem('isLoggedIn', 'true');
+
+                if (docSnap.exists) {
+                    const userData = docSnap.data();
+
+                    // --- SOFT DELETE CHECK ---
+                    if (userData.status === 'archived') {
+                        showSoftToast("Acceso denegado. Tu cuenta ha sido archivada.", "error");
+                        await auth.signOut(); // Logout immediately
+                        btn.innerText = originalText;
+                        btn.disabled = false;
+                        return; // Stop execution
+                    }
+
+                    const role = userData.role || 'student';
+                    localStorage.setItem('role', role);
+
+                    window.location.href = 'dashboard.html';
+                } else {
+                    // Fallback if no user doc exists
+                    localStorage.setItem('role', 'student');
+                    window.location.href = 'dashboard.html';
+                }
+
+            } catch (error) {
+                console.error("Login Error:", error);
+
+                let msg = "Error: " + error.code + " - " + error.message;
+                if (error.code === 'auth/invalid-credential' || error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
+                    msg = "Correo o contraseña incorrectos.";
+                } else if (error.code === 'auth/too-many-requests') {
+                    msg = "Demasiados intentos. Inténtalo más tarde.";
+                } else if (error.code === "auth/internal-error") {
+                    msg = "Error interno de Firebase: " + error.message;
+                }
+
+                showSoftToast(msg, "error");
+                btn.innerText = originalText;
+                btn.disabled = false;
+            }
+        }
+    </script>
+</body>
+
+</html>
+```

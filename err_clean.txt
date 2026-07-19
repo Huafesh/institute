@@ -1,0 +1,9 @@
+C:\Users\Huafesh\OneDrive\Documentos\Proyectos\institute\temp_2.js:2798
+                const bgInput = document.getElementById('bg-upload-in
+                                                        ^^^^^^^^^^^^^
+
+SyntaxError: Invalid or unexpected token
+    at wrapSafe (node:internal/modules/cjs/loader:1692:18)
+    at checkSyntax (node:internal/main/check_syntax:76:3)
+
+Node.js v24.12.0

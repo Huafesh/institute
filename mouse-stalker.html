@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>VFX-JS Demo: Círculo que sigue al mouse</title>
+  <style>
+    html, body {
+      height: 100vh;
+      margin: 0;
+      background: #111;
+      color: #fff;
+      font-family: sans-serif;
+      overflow: hidden; /* Evita scroll en la página */
+    }
+
+    .wrap {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    header { padding:12px 16px; background:#0b0b0b; border-bottom:1px solid #222; flex: 0 0 auto }
+
+    main {
+      flex: 1 1 auto;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      overflow: hidden; /* evita barras internas */
+      padding: 24px;
+    }
+
+    /* Ajuste del canvas para que quepa sin provocar scrollbars */
+    #canvas {
+      width: 80vw;
+      max-width: 1200px;
+      height: 60vh;
+      background: #000;
+      display:block;
+      box-sizing: border-box;
+    }
+
+    .info { position:fixed; left:12px; bottom:12px; background:#111; padding:8px 10px; border-radius:6px; border:1px solid #222 }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <strong>VFX-JS — Demo: Círculo que sigue al mouse</strong>
+      <small style="margin-left:12px;color:#888">Usa <code>VFX</code> desde <code>esm.sh</code></small>
+    </header>
+    <main>
+      <canvas id="canvas"></canvas>
+    </main>
+    <div class="info">Mueve el mouse sobre el canvas</div>
+  </div>
+
+  <script type="module">
+    // Cargamos VFX-JS desde CDN (esm.sh)
+    import { VFX } from 'https://esm.sh/@vfx-js/core';
+
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+
+    const resize = () => {
+      const ratio = window.devicePixelRatio || 1;
+      const rect = canvas.getBoundingClientRect();
+      canvas.width = rect.width * ratio;
+      canvas.height = rect.height * ratio;
+      ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+    };
+    window.addEventListener('resize', resize);
+    resize();
+
+    // Simple "mouse stalker" - mantiene un rastro de círculos que siguen al mouse
+    const rectInit = canvas.getBoundingClientRect();
+    let target = [rectInit.width/2, rectInit.height/2];
+    let p = target.slice();
+    const ps = [];
+    let isMouseOn = false;
+
+    // Random/orbit mode when mouse leaves
+    let randomMode = false;
+    let randomStart = 0;
+    let randomAngle = 0;
+    let randomRadius = 0;
+    let randomSpeed = 0;
+    const randomDelay = 300; // ms before starting the orbit after leaving
+
+    canvas.addEventListener('mousemove', (e) => {
+      isMouseOn = true;
+      randomMode = false;
+      const rect = canvas.getBoundingClientRect();
+      target = [e.clientX - rect.left, e.clientY - rect.top];
+    });
+    canvas.addEventListener('mouseleave', () => {
+      isMouseOn = false;
+      const rect = canvas.getBoundingClientRect();
+      const center = [rect.width/2, rect.height/2];
+      // Immediately set target to center so it returns there
+      target = center.slice();
+
+      // Start random/orbit mode shortly after leaving
+      randomMode = true;
+      randomStart = performance.now() + randomDelay;
+      randomAngle = Math.random() * Math.PI * 2;
+      randomRadius = Math.min(rect.width, rect.height) * (0.12 + Math.random() * 0.25);
+      randomSpeed = 0.8 + Math.random() * 1.6;
+    });
+
+    function lerp(a,b,t){return a*(1-t)+b*t}
+
+    // Dibujamos y actualizamos la textura que luego VFX usará
+    function draw() {
+      requestAnimationFrame(draw);
+
+      // If in random/orbit mode, update target based on elapsed time
+      if (randomMode) {
+        const rect = canvas.getBoundingClientRect();
+        const center = [rect.width/2, rect.height/2];
+        const now = performance.now();
+        if (now >= randomStart) {
+          const t = (now - randomStart) / 1000;
+          const angle = randomAngle + t * randomSpeed;
+          const radiusOsc = randomRadius * (0.5 + 0.5 * Math.sin(t * 0.7));
+          // slight erratic offset
+          const wobble = Math.sin(t * 3.7) * (randomRadius * 0.08);
+          target = [center[0] + Math.cos(angle) * (radiusOsc + wobble), center[1] + Math.sin(angle) * (radiusOsc + wobble)];
+        }
+      }
+
+      // Interpolación suave hacia el objetivo
+      p[0] = lerp(p[0], target[0], 0.12);
+      p[1] = lerp(p[1], target[1], 0.12);
+
+      ps.push([p[0], p[1]]);
+      if (ps.length > 30) ps.shift();
+
+      // Clear
+      ctx.clearRect(0,0,canvas.width, canvas.height);
+      // Background
+      ctx.fillStyle = '#000';
+      ctx.fillRect(0,0,canvas.width, canvas.height);
+
+      // (Text removed from demo)
+      // You can draw text here if needed by restoring these lines
+      // Example:
+      // ctx.fillStyle = 'white';
+      // ctx.font = 'bold 24px sans-serif';
+      // ctx.textAlign = 'center';
+      // ctx.textBaseline = 'middle';
+      // ctx.fillText('HOVER ME', canvas.width/2, canvas.height/2);
+
+      // Trail
+      for (let i=0;i<ps.length;i++){
+        const [x,y] = ps[i];
+        const t = i/ps.length;
+        const alpha = t * 0.6 + 0.4;
+        ctx.beginPath();
+        ctx.fillStyle = `rgba(${Math.round(255*(1-t))},255,${Math.round(255*t)},${alpha})`;
+        ctx.arc(x, y, i + 10, 0, Math.PI*2);
+        ctx.fill();
+      }
+
+      // Avisamos a VFX que el canvas cambió
+      if (vfxInstance) vfxInstance.update(canvas);
+    }
+
+    // Shader de post-procesado (el mismo que usa la docs para `canvas`)
+    const canvasShader = `precision highp float;
+uniform vec2 resolution;
+uniform vec2 offset;
+uniform float time;
+uniform sampler2D src;
+out vec4 outColor;
+
+#define ZOOM(uv, x) ((uv - .5) / x + .5)
+
+void main (void) {
+    vec2 uv = (gl_FragCoord.xy - offset) / resolution;
+
+    float r = sin(time) * 0.5 + 0.5;
+
+    float l = pow(length(uv - .5), 2.);
+    uv = (uv - .5) *  (1. - l * 0.3 * r) + .5;
+
+    float n = 0.02 + r * 0.03;
+    vec4 cr = texture(src, ZOOM(uv, 1.00));
+    vec4 cg = texture(src, ZOOM(uv, (1. + n)));
+    vec4 cb = texture(src, ZOOM(uv, (1. + n * 2.)));
+
+    outColor = vec4(cr.r, cg.g, cb.b, 1);
+}
+`;
+
+    // Inicializamos VFX y añadimos el canvas con el shader
+    let vfxInstance;
+    (async () => {
+      vfxInstance = new VFX();
+      await vfxInstance.add(canvas, { shader: canvasShader });
+      draw();
+    })();
+
+  </script>
+</body>
+</html>

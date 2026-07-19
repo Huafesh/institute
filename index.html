@@ -1,0 +1,1148 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ceind Institute | Educación para el Futuro</title>
+    <link rel="icon" type="image/png" href="assets/Favicon.png">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+        /* =========================================
+           CSS REDISEÑADO COMPLETAMENTE (PREMIUM)
+           ========================================= */
+
+        :root {
+            --primary-color: #003d80;
+            /* Azul Profundo Institucional */
+            --secondary-color: #00a8ff;
+            /* Azul Claro Vibrante para acentos */
+            --accent-color: #ffcc00;
+            /* Dorado Suave opcional */
+            --card-bg: #ffffff;
+            --body-bg: #ffffff;
+            --light-section-bg: #f4f7f6;
+            --text-color: #555;
+            --title-color: #111;
+            --white: #ffffff;
+            --dark-footer-bg: #101a24;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            --shadow-hover: 0 20px 40px rgba(0, 0, 0, 0.12);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        body.dark-mode {
+            --body-bg: #0f0f0f;
+            --card-bg: #1e1e1e;
+            --light-section-bg: #141414;
+            --text-color: #d0d0d0;
+            --title-color: #f0f0f0;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            --shadow-hover: 0 20px 40px rgba(0, 0, 0, 0.7);
+            --primary-color: #4da3ff;
+            /* Lighter blue for better contrast in dark */
+            /* --white remains #ffffff to ensure text on dark backgrounds stays readable */
+        }
+
+        /* Ensure specific text remains white in dark mode if needed */
+        body.dark-mode .btn-primary,
+        body.dark-mode .hero-content h1 {
+            color: #ffffff;
+        }
+
+        /* View Transition for Theme Switch */
+        ::view-transition-old(root),
+        ::view-transition-new(root) {
+            animation: none;
+            mix-blend-mode: normal;
+        }
+
+        /* Icon Shapeshift Animation */
+        .theme-toggle i {
+            view-transition-name: theme-icon;
+        }
+
+        ::view-transition-old(theme-icon) {
+            animation: icon-out 0.5s cubic-bezier(0.76, 0, 0.24, 1) forwards;
+        }
+
+        ::view-transition-new(theme-icon) {
+            animation: icon-in 0.5s cubic-bezier(0.76, 0, 0.24, 1) forwards;
+        }
+
+        @keyframes icon-out {
+            0% {
+                transform: scale(1) rotate(0deg);
+                opacity: 1;
+            }
+
+            100% {
+                transform: scale(0) rotate(180deg);
+                opacity: 0;
+            }
+        }
+
+        @keyframes icon-in {
+            0% {
+                transform: scale(0) rotate(-180deg);
+                opacity: 0;
+            }
+
+            100% {
+                transform: scale(1) rotate(0deg);
+                opacity: 1;
+            }
+        }
+
+        /* Reset y Básicos */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            font-size: 16px;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.7;
+            color: var(--text-color);
+            background-color: var(--body-bg);
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+            transition: var(--transition);
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        /* Títulos y Botones Modernos */
+        h1,
+        h2,
+        h3 {
+            color: var(--title-color);
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 25px;
+        }
+
+        .section-padding {
+            padding: 100px 0;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 14px 35px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: #ffffff !important;
+            /* Force white text always */
+        }
+
+        .btn-primary:hover {
+            background: var(--secondary-color);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 168, 255, 0.3);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--white);
+            border: 2px solid var(--white);
+            margin-left: 15px;
+        }
+
+        .btn-secondary:hover {
+            background: var(--white);
+            color: var(--primary-color);
+            transform: translateY(-3px);
+        }
+
+        .btn-login {
+            background: transparent;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+            padding: 10px 25px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-login:hover {
+            background: var(--primary-color);
+            color: #ffffff !important;
+            /* Ensure text turns white on hover */
+            transform: scale(1.05);
+        }
+
+        /* --- Navbar Rediseñado --- */
+        .navbar {
+            background: var(--card-bg);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            height: 80px;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 100%;
+        }
+
+        .logo {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 25px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            font-weight: 500;
+            color: var(--title-color);
+            font-size: 1rem;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-color);
+        }
+
+        .menu-toggle {
+            display: none;
+            font-size: 1.7rem;
+            cursor: pointer;
+            color: var(--primary-color);
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.2rem;
+            color: var(--title-color);
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            padding: 5px;
+        }
+
+        .theme-toggle:hover {
+            color: var(--primary-color);
+            transform: scale(1.1);
+        }
+
+        /* --- Hero Section Premium --- */
+        .hero {
+            height: 90vh;
+            background: linear-gradient(rgba(0, 61, 128, 0.85), rgba(0, 0, 0, 0.7)), url('assets/imagenes/snoopy_1920x1080.webp');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            text-align: center;
+            color: var(--white);
+        }
+
+        .hero-content h1 {
+            font-size: 4rem;
+            margin-bottom: 25px;
+            color: var(--white);
+        }
+
+        .hero-content .highlight {
+            color: var(--secondary-color);
+        }
+
+        .hero-content p {
+            font-size: 1.3rem;
+            margin-bottom: 40px;
+            max-width: 750px;
+            margin-left: auto;
+            margin-right: auto;
+            opacity: 0.95;
+            font-weight: 300;
+        }
+
+        /* --- Nosotros (Nosotros + Features) --- */
+        .about {
+            background-color: var(--light-section-bg);
+        }
+
+        .about-content {
+            display: flex;
+            align-items: center;
+            gap: 60px;
+            margin-bottom: 80px;
+        }
+
+        .about-img {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            /* Espacio para una ilustración o foto real */
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+        }
+
+        .about-text {
+            flex: 1;
+        }
+
+        .about-text p {
+            margin-bottom: 20px;
+            text-align: justify;
+        }
+
+        .about-text strong {
+            color: var(--primary-color);
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-header h2 {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-header h2::after {
+            content: '';
+            display: block;
+            width: 70px;
+            height: 4px;
+            background: var(--secondary-color);
+            margin: 12px auto 0;
+            border-radius: 2px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+        }
+
+        .feature-card {
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            border: 1px solid #eee;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .icon-box {
+            width: 80px;
+            height: 80px;
+            background: rgba(0, 168, 255, 0.1);
+            color: var(--secondary-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 25px auto;
+            font-size: 2.2rem;
+        }
+
+        /* --- Cursos Grid Rediseñado --- */
+        .courses-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 35px;
+        }
+
+        .course-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            border: 1px solid #f0f0f0;
+        }
+
+        .course-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .course-img {
+            height: 220px;
+            background-size: 100% 100%;
+            /* Force image to fit completely */
+            background-position: center;
+            position: relative;
+        }
+
+        .course-img::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.5));
+        }
+
+        /* Simulación de imágenes reales para mayor impacto visual */
+        .img-1 {
+            background-image: url('assets/imagenes/thumb-english.png?v=2');
+        }
+
+        /* Inglés */
+        .img-2 {
+            background-image: url('assets/imagenes/thumb-china.png');
+        }
+
+        /* Import China */
+        .img-3 {
+            background-image: url('assets/imagenes/thumb-usa.png');
+        }
+
+        /* Import USA */
+        .img-4 {
+            background-image: url('assets/imagenes/thumb-jr.png');
+        }
+
+        /* Import Jr */
+
+        .course-info {
+            padding: 30px;
+        }
+
+        .category {
+            font-size: 0.85rem;
+            color: var(--secondary-color);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .course-info h3 {
+            margin-bottom: 12px;
+            color: var(--title-color);
+            font-size: 1.5rem;
+        }
+
+        .btn-text {
+            display: inline-flex;
+            align-items: center;
+            margin-top: 20px;
+            color: var(--primary-color);
+            font-weight: 600;
+            gap: 8px;
+            transition: var(--transition);
+        }
+
+        .btn-text:hover {
+            gap: 12px;
+            color: var(--secondary-color);
+        }
+
+        /* --- Footer Rediseñado (Elegante) --- */
+        footer {
+            background: var(--dark-footer-bg);
+            color: #a0abb8;
+            padding-top: 100px;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 50px;
+            padding-bottom: 60px;
+        }
+
+        .footer-col h3 {
+            margin-bottom: 25px;
+            color: var(--white);
+            font-size: 1.4rem;
+        }
+
+        .footer-col ul li {
+            margin-bottom: 15px;
+        }
+
+        .footer-col ul li a {
+            color: #a0abb8;
+            font-size: 1rem;
+        }
+
+        .footer-col ul li a:hover {
+            color: var(--white);
+            padding-left: 10px;
+        }
+
+        .contact-info p {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .contact-info i {
+            color: var(--secondary-color);
+            font-size: 1.2rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        .copyright {
+            text-align: center;
+            padding: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 0.95rem;
+            color: #707a85;
+        }
+
+        /* --- Media Queries Rediseñados --- */
+        @media (max-width: 992px) {
+            .about-content {
+                flex-direction: column;
+                gap: 40px;
+            }
+
+            .hero-content h1 {
+                font-size: 3.2rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .menu-toggle {
+                display: block;
+            }
+
+            .nav-links {
+                position: absolute;
+                top: 80px;
+                left: 0;
+                width: 100%;
+                background: var(--white);
+                flex-direction: column;
+                padding: 40px;
+                box-shadow: var(--shadow);
+                clip-path: circle(0px at 100% 0px);
+                transition: all 0.6s ease-in-out;
+                pointer-events: none;
+                gap: 15px;
+            }
+
+            .nav-links.active {
+                clip-path: circle(1200px at 100% 0px);
+                pointer-events: all;
+            }
+
+            .nav-links li {
+                width: 100%;
+                text-align: center;
+            }
+
+            .nav-links a,
+            .btn-login,
+            .btn-primary.btn-nav {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .hero {
+                height: 80vh;
+            }
+
+            .hero-content h1 {
+                font-size: 2.6rem;
+            }
+
+            .hero-btns {
+                display: flex;
+                flex-direction: column;
+                gap: 15px;
+                align-items: center;
+            }
+
+            .btn-secondary {
+                margin-left: 0;
+            }
+
+            .btn-secondary {
+                margin-left: 0;
+            }
+        }
+
+        /* Stats Counter Styles */
+        .footer-stats {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 30px 0;
+            margin-top: 40px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .stats-container {
+            display: flex;
+            justify-content: center;
+            gap: 80px;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            text-align: center;
+            color: #a0abb8;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .stat-icon {
+            font-size: 1.5rem;
+            color: var(--secondary-color);
+            margin-bottom: 10px;
+        }
+
+        /* SLOT MACHINE CSS PORTED & SCALED */
+        .slot-wrapper {
+            display: flex;
+            gap: 2px;
+            height: 40px;
+            /* Fixed height for footer */
+            overflow: hidden;
+            margin-bottom: 5px;
+            /* Center the slot machine */
+            justify-content: center;
+        }
+
+        .digit-window {
+            width: 24px;
+            height: 40px;
+            overflow: hidden;
+            position: relative;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 4px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .digit-strip {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            will-change: transform;
+            /* Transition handled in JS or class to allow immediate reset */
+            transition: transform 2s cubic-bezier(0.17, 0.67, 0.12, 1.1), filter 0.5s;
+        }
+
+        .digit-strip span {
+            height: 40px;
+            line-height: 40px;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--white);
+            display: block;
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 5px;
+        }
+
+        /* --- ICON ANIMATIONS --- */
+        /* 1. Expert Teachers: Intermittent Glitch (1s Pause) */
+        @keyframes rgb-shift {
+
+            /* Glitch Phase (0% - 30%) -> approx 0.45s */
+            0% {
+                text-shadow: 4px 0 #ff0000, -4px 0 #0000ff;
+                transform: translate(0);
+            }
+
+            4% {
+                text-shadow: 4px -2px #ff0000, -4px 2px #0000ff;
+                transform: translate(-3px, 3px);
+            }
+
+            8% {
+                text-shadow: -4px 2px #ff0000, 4px -2px #0000ff;
+                transform: translate(3px, -3px);
+            }
+
+            12% {
+                text-shadow: 3px -3px #ff0000, -3px 3px #0000ff;
+                transform: translate(-3px, -3px);
+            }
+
+            16% {
+                text-shadow: 0 0 transparent;
+                transform: translate(0);
+            }
+
+            20% {
+                text-shadow: -3px 0 #ff0000, 3px 0 #0000ff;
+                transform: translate(2px, 2px);
+            }
+
+            24% {
+                text-shadow: 3px 0 #ff0000, -3px 0 #0000ff;
+                transform: translate(-2px, -2px);
+            }
+
+            30% {
+                text-shadow: 0 0 transparent;
+                transform: translate(0);
+            }
+
+            /* Pause ~1s (30% - 95% of 1.5s = ~1s) */
+            95% {
+                text-shadow: 0 0 transparent;
+                transform: translate(0);
+            }
+
+            /* Quick Blip at End */
+            96% {
+                text-shadow: 2px 0 #ff0000, -2px 0 #0000ff;
+                transform: translate(1px, 1px);
+            }
+
+            100% {
+                text-shadow: 0 0 transparent;
+                transform: translate(0);
+            }
+        }
+
+        .animate-rgb-shift i {
+            display: inline-block;
+            animation: rgb-shift 1.5s infinite steps(1);
+            color: var(--primary);
+        }
+
+        /* 2. Specialized Training: 3D Texture Effect */
+        @keyframes world-spin {
+            0% {
+                background-position-x: 0;
+            }
+
+            100% {
+                background-position-x: -120px;
+            }
+
+            /* Must match background-size width */
+        }
+
+        .planet-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: url('assets/imagenes/world-map.png');
+            background-size: 120px 60px;
+            /* 2:1 ratio for seamless loop */
+            background-repeat: repeat-x;
+            /* Inner shadow for 3D sphere effect */
+            box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.6), inset -8px -4px 8px rgba(0, 0, 0, 0.3);
+            animation: world-spin 5s linear infinite;
+            margin: 0 auto;
+        }
+
+        /* 3. Certification: Jump & Rotate with Squash */
+        @keyframes jump-rotate {
+            0% {
+                transform: translateY(0) scale(1, 1) rotate(0deg);
+            }
+
+            5% {
+                transform: translateY(0) scale(1.3, 0.7) rotate(0deg);
+            }
+
+            /* Anticipation/Squash */
+            10% {
+                transform: translateY(-5px) scale(0.9, 1.1) rotate(45deg);
+            }
+
+            /* Stretch Start */
+            30% {
+                transform: translateY(-20px) scale(0.9, 1.1) rotate(180deg);
+            }
+
+            /* Peak */
+            50% {
+                transform: translateY(0) scale(0.8, 1.2) rotate(360deg);
+            }
+
+            /* Impact Stretch? No, Compression */
+            55% {
+                transform: translateY(0) scale(1.4, 0.6) rotate(360deg);
+            }
+
+            /* Impact Squash */
+            65% {
+                transform: translateY(0) scale(0.9, 1.1) rotate(360deg);
+            }
+
+            /* Rebound Stretch */
+            75% {
+                transform: translateY(0) scale(1, 1) rotate(360deg);
+            }
+
+            /* Settle */
+            100% {
+                transform: translateY(0) scale(1, 1) rotate(360deg);
+            }
+        }
+
+        .animate-jump-rotate i {
+            display: inline-block;
+            animation: jump-rotate 1.8s ease-in-out infinite;
+            transform-origin: bottom center;
+            /* Pivot from feet for better squash */
+        }
+
+        /* Typewriter Cursor */
+        .typing-cursor {
+            display: inline-block;
+            width: 3px;
+            background-color: var(--primary);
+            margin-left: 2px;
+            animation: blink 0.7s infinite;
+        }
+
+        .typing-cursor.blinking-infinite {
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <div class="container nav-container">
+            <div class="logo">
+                <i class="fas fa-graduation-cap"></i> Ceind Institute
+            </div>
+            <ul class="nav-links">
+                <li><a href="#inicio" data-i18n="nav_home">Inicio</a></li>
+                <li><a href="#nosotros" data-i18n="nav_about">Nosotros</a></li>
+                <li><a href="#cursos" data-i18n="nav_courses_public">Cursos</a></li>
+                <li><a href="#" class="btn-login"
+                        onclick="event.preventDefault(); if(localStorage.getItem('isLoggedIn') === 'true') { window.location.href = 'dashboard.html'; } else { window.location.href = 'login.html'; }"><i
+                            class="fas fa-user-circle"></i> <span data-i18n="nav_login">Aula Virtual</span></a></li>
+                <li><a href="login.html" class="btn-primary btn-nav btn" style="padding: 10px 25px;"
+                        data-i18n="nav_signup">Inscribirse</a>
+                </li>
+                <li>
+                    <button id="theme-toggle" class="theme-toggle" title="Cambiar tema">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                </li>
+            </ul>
+            <div class="menu-toggle">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </nav>
+
+    <header id="inicio" class="hero">
+        <div class="container hero-content">
+            <h1><span data-i18n="hero_title_prefix">Impulsa tu carrera en</span> <span class="highlight">Ceind
+                    Institute</span></h1>
+            <p data-i18n="hero_subtitle">Formación profesional de alto nivel adaptada a las demandas del mercado actual.
+                Tu futuro comienza hoy.
+            </p>
+            <div class="hero-btns">
+                <a href="#cursos" class="btn btn-primary" data-i18n="btn_view_courses">Ver Cursos</a>
+                <a href="#nosotros" class="btn btn-secondary" data-i18n="btn_learn_more">Saber más</a>
+            </div>
+        </div>
+    </header>
+
+    <section id="nosotros" class="about section-padding">
+        <div class="container">
+            <div class="section-header">
+                <h2>Nosotros</h2>
+            </div>
+
+            <div class="about-content">
+                <div class="about-img">
+                    <img src="https://images.unsplash.com/photo-1531496730074-83b6232e9e4c?auto=format&fit=crop&w=600&q=80"
+                        alt="Equipo Ceind Institute" style="border-radius: 15px;">
+                </div>
+                <div class="about-text">
+                    <p>En <strong>CEIND INSTITUTE</strong> somos una academia de formación académica y capacitación
+                        especializada, orientada a brindar una enseñanza accesible, práctica y adaptada a las
+                        necesidades actuales de estudiantes y profesionales.</p>
+                    <p>Nacemos con el objetivo de fortalecer las competencias en idiomas, educación básica y áreas
+                        complementarias, a través de una metodología virtual que permite flexibilidad de horarios,
+                        clases dinámicas y acompañamiento personalizado.</p>
+                </div>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="icon-box animate-rgb-shift"><i class="fas fa-chalkboard-teacher"></i></div>
+                    <h3>Expertos Docentes</h3>
+                    <p>Aprende de profesionales activos en la industria con años de experiencia real.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon-box">
+                        <div class="planet-icon"></div>
+                    </div>
+                    <h3>Formación Especializada</h3>
+                    <p>Domina el inglés y conviértete en un experto importador de China y USA con nuestros programas
+                        exclusivos.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon-box animate-jump-rotate"><i class="fas fa-certificate"></i></div>
+                    <h3>Certificación Oficial</h3>
+                    <p>Obtén certificados validados internacionalmente que potenciarán tu CV.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="cursos" class="courses section-padding">
+        <div class="container">
+            <div class="section-header">
+                <h2>Nuestros Programas</h2>
+                <p>Elige el camino que te llevará al éxito profesional.</p>
+            </div>
+            <div class="courses-grid">
+                <div class="course-card">
+                    <div class="course-img img-1"></div>
+                    <div class="course-info">
+                        <span class="category">Idiomas</span>
+                        <h3>Inglés desde cero</h3>
+                        <p>Domina el idioma universal desde los fundamentos hasta una conversación fluida.</p>
+                        <a href="#" class="btn-text">Ver temario <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+
+                <div class="course-card">
+                    <div class="course-img img-2"></div>
+                    <div class="course-info">
+                        <span class="category">Negocios</span>
+                        <h3>Importaciones desde China</h3>
+                        <p>Aprende a negociar con proveedores asiáticos y gestiona la logística de tus productos.</p>
+                        <a href="#" class="btn-text">Ver temario <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+
+                <div class="course-card">
+                    <div class="course-img img-3"></div>
+                    <div class="course-info">
+                        <span class="category">Negocios</span>
+                        <h3>Importaciones desde USA</h3>
+                        <p>Trae productos de marcas reconocidas y aprovecha las oportunidades del mercado americano.</p>
+                        <a href="#" class="btn-text">Ver temario <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+
+                <div class="course-card">
+                    <div class="course-img img-4"></div>
+                    <div class="course-info">
+                        <span class="category">Emprendimiento</span>
+                        <h3>Importador Jr.</h3>
+                        <p>Iníciate en el mundo del comercio exterior y realiza tu primera importación con éxito.</p>
+                        <a href="#" class="btn-text">Ver temario <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer id="contacto">
+        <div class="container footer-content">
+            <div class="footer-col">
+                <div class="logo" style="margin-bottom: 20px; color: white;">
+                    <i class="fas fa-graduation-cap"></i> Ceind Institute
+                </div>
+                <p>Educando a la próxima generación de líderes con tecnología y pasión.</p>
+            </div>
+            <div class="footer-col">
+                <h3>Enlaces</h3>
+                <ul>
+                    <li><a href="#inicio">Inicio</a></li>
+                    <li><a href="#nosotros">Nosotros</a></li>
+                    <li><a href="#cursos">Cursos</a></li>
+                    <li><a href="#">Contacto</a></li>
+                </ul>
+            </div>
+            <div class="footer-col contact-info">
+                <h3>Contacto</h3>
+                <p><i class="fas fa-map-marker-alt"></i> Av. Principal 123, Ciudad Tecnológica</p>
+                <p><i class="fas fa-phone"></i> +51 999 999 99</p>
+                <p><i class="fas fa-envelope"></i> Ceindinstitute@gmail.com</p>
+            </div>
+        </div>
+
+        <!-- Visit Stats -->
+        <div class="footer-stats">
+            <div class="container stats-container">
+                <div class="stat-item">
+                    <div class="stat-icon"><i class="fas fa-eye"></i></div>
+                    <!-- Slot Wrapper Container -->
+                    <div id="page-views-count" class="slot-wrapper"></div>
+                    <span class="stat-label">Veces Visitadas</span>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-icon"><i class="fas fa-users"></i></div>
+                    <!-- Slot Wrapper Container -->
+                    <div id="unique-visitors-count" class="slot-wrapper"></div>
+                    <span class="stat-label">Usuarios Únicos</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="copyright">
+            <p>&copy; 2026 Ceind Institute. Todos los derechos reservados. | Diseñado por Huafesh</p>
+        </div>
+    </footer>
+
+    <!-- Firebase SDKs (Compat version) -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics-compat.js"></script>
+
+    <script src="js/firebase-config.js"></script>
+    <script src="js/translations.js"></script>
+    <script src="js/typewriter-effect.js"></script>
+    <script src="js/theme.js"></script>
+    <script>
+        /* =========================================
+           JAVASCRIPT (INTERACCIONES BÁSICAS)
+           ========================================= */
+        document.addEventListener('DOMContentLoaded', () => {
+            // Menú Hamburguesa
+            const menuToggle = document.querySelector('.menu-toggle');
+            const navLinks = document.querySelector('.nav-links');
+
+            menuToggle.addEventListener('click', () => {
+                navLinks.classList.toggle('active');
+                menuToggle.querySelector('i').classList.toggle('fa-bars');
+                menuToggle.querySelector('i').classList.toggle('fa-times');
+            });
+
+            // Smooth Scroll para Links Internos
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    if (this.getAttribute('href') !== '#') {
+                        e.preventDefault();
+                        const target = document.querySelector(this.getAttribute('href'));
+                        if (target) {
+                            target.scrollIntoView({
+                                behavior: 'smooth'
+                            });
+                            // Cerrar menú móvil al hacer click
+                            if (window.innerWidth <= 768) {
+                                navLinks.classList.remove('active');
+                                menuToggle.querySelector('i').classList.add('fa-bars');
+                                menuToggle.querySelector('i').classList.remove('fa-times');
+                            }
+                        }
+                    }
+                });
+            });
+
+            // --- CONTADORES DE VISITAS (REAL-TIME FIRESTORE) ---
+            const viewCountEl = document.getElementById('page-views-count');
+            const uniqueUserEl = document.getElementById('unique-visitors-count');
+            const statsSection = document.querySelector('.footer-stats');
+            let hasInitializedCounters = false;
+
+            // Observer para activar animación/carga al hacer scroll
+            const statsObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting && !hasInitializedCounters) {
+                        hasInitializedCounters = true;
+
+                        // Iniciar lógica real (definida en visitor-counter.js)
+                        if (window.initVisitorCounters) {
+                            window.initVisitorCounters(viewCountEl, uniqueUserEl);
+                        }
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            if (statsSection) statsObserver.observe(statsSection);
+
+            // Cerrar menú al hacer click
+            document.querySelectorAll('.nav-links a').forEach(link => {
+                link.addEventListener('click', () => {
+                    navLinks.classList.remove('active');
+                    menuToggle.querySelector('i').classList.add('fa-bars');
+                    menuToggle.querySelector('i').classList.remove('fa-times');
+                });
+            });
+
+            // --- Dark Mode Logic handled by js/theme.js ---
+        });
+    </script>
+    <script src="js/visitor-counter.js"></script>
+</body>
+
+</html>

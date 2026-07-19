@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aula Virtual | Ceind Institute</title>
+    <link rel="icon" type="image/png" href="assets/Favicon.png">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #003d80;
+            --secondary-color: #00a8ff;
+            --accent-color: #ffcc00;
+            --bg-color: #f4f7f6;
+            --sidebar-width: 280px;
+            --text-color: #444;
+            --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            --card-bg: #fff;
+            --title-color: #111;
+            --border-radius: 20px;
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            /* Course Player specific var */
+            --video-height: 500px;
+        }
+
+        body.dark-mode {
+            --bg-color: #0f0f0f;
+            --text-color: #d0d0d0;
+            --card-bg: #1e1e1e;
+            --title-color: #f0f0f0;
+            --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* --- SCROLLBAR CUSTOMIZATION --- */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        body.dark-mode ::-webkit-scrollbar-track {
+            background: #1e1e1e;
+        }
+
+        body.dark-mode ::-webkit-scrollbar-thumb {
+            background: #444;
+        }
+
+        body.dark-mode ::-webkit-scrollbar-thumb:hover {
+            background: #666;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-color);
+            display: flex;
+            min-height: 100vh;
+            color: var(--text-color);
+        }
+
+        /* --- SIDEBAR (Standard with Hover Effect) --- */
+        .sidebar {
+            width: 80px;
+            background: var(--primary-color);
+            color: #fff;
+            position: fixed;
+            height: 100%;
+            padding: 20px 15px;
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+            transition: width 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            overflow: hidden;
+            /* Prevent text overflow during transition */
+            box-shadow: 5px 0 15px rgba(0, 0, 0, 0.1);
+            /* Match xd.html shadow */
+        }
+
+        .sidebar:hover {
+            width: var(--sidebar-width);
+            padding: 20px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            /* Increased gap */
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            white-space: nowrap;
+            justify-content: center;
+            /* Center icon when collapsed */
+        }
+
+        .sidebar:hover .brand {
+            justify-content: flex-start;
+            /* Align left when expanded */
+        }
+
+        .brand span {
+            opacity: 0;
+            transition: opacity 0.2s;
+            display: none;
+            /* Hide text completely to fix centering */
+        }
+
+        .sidebar:hover .brand span {
+            display: inline-block;
+            opacity: 1;
+        }
+
+        /* User Profile in Sidebar */
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            padding: 0;
+            /* No padding when collapsed */
+            border-radius: 12px;
+            background: transparent;
+            /* No background when collapsed */
+            cursor: pointer;
+            white-space: nowrap;
+            overflow: hidden;
+            transition: all 0.3s;
+            justify-content: center;
+            /* Center avatar */
+        }
+
+        .sidebar:hover .user-profile {
+            padding: 15px;
+            /* Restore padding */
+            background: rgba(255, 255, 255, 0.1);
+            /* Restore background */
+            justify-content: flex-start;
+            min-height: 80px;
+            /* Ensure enough height for Avatar + Text + Badge */
+        }
+
+        .user-profile:hover {
+            background: rgba(255, 255, 255, 0.2) !important;
+            /* Brighter on hover */
+        }
+
+        .user-avatar-sm {
+            min-width: 45px;
+            height: 45px;
+            background: var(--secondary-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: white;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .user-info {
+            opacity: 0;
+            transition: opacity 0.2s;
+            display: none;
+            /* Hide completely when collapsed */
+        }
+
+        .sidebar:hover .user-info {
+            opacity: 1;
+            display: block;
+        }
+
+        .user-info h4 {
+            font-size: 0.9rem;
+            margin: 0;
+        }
+
+        .user-info span {
+            font-size: 0.75rem;
+            opacity: 0.8;
+            display: block !important;
+        }
+
+        /* Menu Items */
+        .menu-items li {
+            list-style: none;
+            margin-bottom: 10px;
+        }
+
+        .menu-items a {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 12px;
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s;
+            white-space: nowrap;
+            justify-content: center;
+            /* Center icons */
+        }
+
+        .sidebar:hover .menu-items a {
+            justify-content: flex-start;
+            /* Align left when expanded */
+            padding: 12px 15px;
+        }
+
+        .menu-items a:hover,
+        .menu-items a.active {
+            background: var(--secondary-color);
+            color: #fff;
+            transform: none;
+            /* Disable shift in collapsed mode if needed, or keep it */
+        }
+
+        .sidebar:hover .menu-items a:hover,
+        .sidebar:hover .menu-items a.active {
+            transform: translateX(5px);
+        }
+
+        .menu-items span {
+            opacity: 0;
+            display: none;
+            /* Hide text */
+            transition: opacity 0.2s;
+        }
+
+        /* --- SCROLLABLE MENU --- */
+        .sidebar .menu-items:not(.back-dashboard):not(.logout) {
+            max-height: calc(100vh - 280px);
+            /* Leave space for profile, back, and logout */
+            overflow-y: auto;
+            overflow-x: hidden;
+            margin-bottom: 10px;
+        }
+
+        /* Thin Scrollbar */
+        .sidebar .menu-items::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .sidebar .menu-items::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .sidebar .menu-items::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+        }
+
+        .sidebar .menu-items::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.4);
+        }
+
+        .sidebar:hover .menu-items span {
+            opacity: 1;
+            display: inline;
+        }
+
+        .back-dashboard {
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 10px;
+        }
+
+        .logout {
+            margin-top: auto;
+        }
+
+        .logout a:hover {
+            color: #ff6b6b;
+            background: rgba(255, 107, 107, 0.1);
+        }
+
+        /* --- MAIN CONTENT --- */
+        .main-content {
+            margin-left: 80px;
+            flex: 1;
+            padding: 0;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* PLAYER AREA (Left) */
+        .player-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .video-container {
+            width: 100%;
+            background: #000;
+            position: relative;
+            padding-top: 56.25%;
+            /* 16:9 Aspect Ratio */
+            max-height: 80vh;
+        }
+
+        .video-placeholder {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            background: linear-gradient(45deg, #111, #222);
+        }
+
+        .play-btn-lg {
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            cursor: pointer;
+            transition: var(--transition);
+            backdrop-filter: blur(5px);
+        }
+
+        .play-btn-lg:hover {
+            background: var(--secondary-color);
+            border-color: var(--secondary-color);
+            transform: scale(1.1);
+        }
+
+        .lesson-info-bar {
+            padding: 20px 40px;
+            background: var(--card-bg);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        body.dark-mode .lesson-info-bar {
+            border-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .lesson-title h1 {
+            font-size: 1.5rem;
+            color: var(--title-color);
+            margin-bottom: 5px;
+        }
+
+        .lesson-breadcrumbs {
+            font-size: 0.9rem;
+            color: #888;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid #ccc;
+            color: var(--text-color);
+        }
+
+        .btn-outline:hover {
+            border-color: var(--secondary-color);
+            color: var(--secondary-color);
+        }
+
+        .btn-primary {
+            background: var(--secondary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-color);
+        }
+
+        .btn-complete {
+            background: #2ecc71;
+            color: white;
+        }
+
+        /* TABS AREA */
+        .tabs-container {
+            padding: 30px 40px;
+            max-width: 1000px;
+        }
+
+        .tabs-head {
+            display: flex;
+            gap: 30px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        body.dark-mode .tabs-head {
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .tab-btn {
+            padding-bottom: 10px;
+            background: none;
+            border: none;
+            font-size: 1rem;
+            color: #888;
+            cursor: pointer;
+            position: relative;
+            font-weight: 500;
+        }
+
+        .tab-btn.active {
+            color: var(--title-color);
+        }
+
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--secondary-color);
+        }
+
+        .tab-content {
+            display: none;
+            line-height: 1.6;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* COURSE SIDEBAR (Right) */
+        .course-sidebar {
+            width: 350px;
+            background: var(--card-bg);
+            border-left: 1px solid rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        body.dark-mode .course-sidebar {
+            border-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .cs-header {
+            padding: 20px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        body.dark-mode .cs-header {
+            border-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .cs-header h3 {
+            font-size: 1.1rem;
+            color: var(--title-color);
+            margin-bottom: 10px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 5px;
+        }
+
+        body.dark-mode .progress-bar {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 45%;
+            background: #2ecc71;
+        }
+
+        .progress-text {
+            font-size: 0.8rem;
+            color: #888;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        /* MODULES LIST */
+        .module-item {
+            border-bottom: 1px solid rgba(0, 0, 0, 0.03);
+        }
+
+        body.dark-mode .module-item {
+            border-color: rgba(255, 255, 255, 0.03);
+        }
+
+        .module-title {
+            padding: 15px 20px;
+            background: rgba(0, 0, 0, 0.02);
+            font-weight: 600;
+            color: var(--title-color);
+            font-size: 0.95rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        body.dark-mode .module-title {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .lesson-list {
+            display: block;
+        }
+
+        .lesson-item {
+            padding: 12px 20px 12px 35px;
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+            cursor: pointer;
+            transition: 0.2s;
+            position: relative;
+        }
+
+        .lesson-item:hover {
+            background: rgba(0, 168, 255, 0.05);
+        }
+
+        .lesson-item.active {
+            background: rgba(0, 168, 255, 0.1);
+            border-left: 3px solid var(--secondary-color);
+        }
+
+        .l-status {
+            padding-top: 3px;
+            color: #ccc;
+            font-size: 0.9rem;
+        }
+
+        .lesson-item.completed .l-status {
+            color: #2ecc71;
+        }
+
+        .l-info {
+            flex: 1;
+        }
+
+        .l-title {
+            font-size: 0.9rem;
+            color: var(--text-color);
+            margin-bottom: 2px;
+            display: block;
+        }
+
+        .lesson-item.active .l-title {
+            color: var(--secondary-color);
+            font-weight: 500;
+        }
+
+        .l-duration {
+            font-size: 0.75rem;
+            color: #888;
+        }
+
+        /* --- RESPONSIVE --- */
+        @media (max-width: 1024px) {
+            .course-sidebar {
+                width: 300px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+                margin-left: 0;
+                height: auto;
+                overflow: visible;
+            }
+
+            .sidebar {
+                display: none;
+                /* Mobile menu needed but hidden for simplicity in this view */
+            }
+
+            .course-sidebar {
+                width: 100%;
+                height: auto;
+                border-left: none;
+                border-top: 1px solid rgba(0, 0, 0, 0.1);
+            }
+
+            .video-container {
+                position: sticky;
+                top: 0;
+                z-index: 50;
+            }
+        }
+
+        /* View Transitions Logic */
+        ::view-transition-old(root),
+        ::view-transition-new(root) {
+            animation: none;
+            mix-blend-mode: normal;
+        }
+
+        /* Ensure the new view is on top */
+        ::view-transition-new(root) {
+            z-index: 2147483646;
+        }
+
+        /* Icon Shapeshift Animation */
+        #theme-toggle i {
+            view-transition-name: theme-icon;
+        }
+
+        ::view-transition-old(theme-icon) {
+            animation: icon-out 0.5s cubic-bezier(0.76, 0, 0.24, 1) forwards;
+        }
+
+        ::view-transition-new(theme-icon) {
+            animation: icon-in 0.5s cubic-bezier(0.76, 0, 0.24, 1) forwards;
+        }
+
+        @keyframes icon-out {
+            0% {
+                transform: scale(1) rotate(0deg);
+                opacity: 1;
+            }
+
+            100% {
+                transform: scale(0) rotate(180deg);
+                opacity: 0;
+            }
+        }
+
+        @keyframes icon-in {
+            0% {
+                transform: scale(0) rotate(-180deg);
+                opacity: 0;
+            }
+
+            100% {
+                transform: scale(1) rotate(0deg);
+                opacity: 1;
+            }
+        }
+
+        /* Initial Dark Mode State logic for icon needs to be handled in JS or specific CSS override if possible, but JS is safer for icon class switch */
+    </style>
+</head>
+
+<body>
+
+    <!-- SIDEBAR (Standard with Hover Effect) -->
+    <nav class="sidebar">
+        <ul class="menu-items back-dashboard">
+            <li><a href="dashboard.html" title="Volver al Dashboard"><i class="fas fa-arrow-left"></i>
+                    <span>Volver</span></a></li>
+        </ul>
+        <div class="brand">
+            <i class="fas fa-graduation-cap"></i> <span>Ceind</span>
+        </div>
+
+        <div class="user-profile clickable-profile" onclick="window.location.href='profile.html'">
+            <div class="user-avatar-sm"></div>
+            <div class="user-info">
+                <h4 id="sidebar-user-name">Cargando...</h4>
+                <span id="sidebar-user-subtitle">...</span>
+            </div>
+        </div>
+
+        <ul class="menu-items">
+            <li><a href="institution.html"><i class="fas fa-university"></i> <span>Página de la institución</span></a>
+            </li>
+            <li><a href="activity.html"><i class="fas fa-globe"></i> <span>Actividad</span></a></li>
+            <li id="admin-link" style="display: none;">
+                <a href="admin_panel.html"><i class="fas fa-th-large"></i> <span>Panel de Control</span></a>
+            </li>
+            <li><a href="javascript:void(0)" class="active" onclick="return false;"><i class="fas fa-book"></i>
+                    <span>Clase</span></a></li>
+            <li><a href="schedule.html"><i class="fas fa-calendar-alt"></i> <span>Horario</span></a></li>
+            <li><a href="grades.html"><i class="fas fa-chart-line"></i> <span>Calificaciones</span></a></li>
+            <li><a href="messages.html"><i class="fas fa-paper-plane"></i> <span>Mensajes</span></a>
+            </li>
+        </ul>
+
+        <ul class="menu-items logout">
+            <li><a href="#" onclick="localStorage.removeItem('isLoggedIn'); window.location.href='login.html';"><i
+                        class="fas fa-sign-out-alt"></i>
+                    <span>Cerrar Sesión</span></a></li>
+        </ul>
+    </nav>
+
+    <div class="main-content">
+        <!-- PLAYER LEFT AREA -->
+        <div class="player-area">
+            <div class="video-container">
+                <div class="video-placeholder">
+                    <div class="play-btn-lg">
+                        <i class="fas fa-play" style="margin-left: 5px; color: white;"></i>
+                    </div>
+                    <h2 style="margin-top: 20px;" id="video-title">Cargando...</h2>
+                </div>
+            </div>
+
+            <div class="lesson-info-bar">
+                <div class="lesson-title">
+                    <div class="lesson-breadcrumbs" id="lesson-breadcrumbs">...</div>
+                    <h1 id="lesson-main-title">...</h1>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn btn-outline" id="theme-toggle"><i class="fas fa-moon"></i></button>
+                    <button class="btn btn-outline" id="btn-prev" onclick="prevLesson()"><i
+                            class="fas fa-chevron-left"></i> Anterior</button>
+                    <button class="btn btn-complete" id="btn-complete" onclick="toggleCompleteLesson()">Completar <i
+                            class="fas fa-check"></i></button>
+                    <button class="btn btn-primary" id="btn-next" onclick="nextLesson()">Siguiente <i
+                            class="fas fa-chevron-right"></i></button>
+                </div>
+            </div>
+
+            <div class="tabs-container">
+                <div class="tabs-head">
+                    <button class="tab-btn active" onclick="switchTab('overview')">Descripción</button>
+                    <button class="tab-btn" onclick="switchTab('resources')">Recursos <span id="resources-tab-count"
+                            style="font-size: 0.8em; opacity: 0.7; margin-left: 5px;"></span></button>
+                    <button class="tab-btn" onclick="switchTab('qa')">Preguntas <span id="qa-tab-count"
+                            style="font-size: 0.8em; opacity: 0.7; margin-left: 5px;"></span></button>
+                </div>
+
+                <div id="overview" class="tab-content active">
+                    <!-- Dynamic Content -->
+                </div>
+
+                <div id="resources" class="tab-content">
+                    <!-- Dynamic Content -->
+                </div>
+
+                <div id="qa" class="tab-content">
+                    <p style="text-align: center; color: #888; padding: 20px;">No hay preguntas en esta lección todavía.
+                        ¡Sé el primero!</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SYLLABUS RIGHT -->
+        <div class="course-sidebar">
+            <div class="cs-header" id="course-sidebar-header">
+                <h3>Contenido del Curso</h3>
+                <!-- Admin: Add Module -->
+                <button id="btn-add-module" class="btn-cms-add" onclick="openCmsModal('module', 'add')"
+                    style="display: none; width: 100%; margin-bottom: 10px; padding: 8px; background: #2ecc71; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                    <i class="fas fa-plus"></i> Nuevo Módulo
+                </button>
+                <!-- Dynamic Progress -->
+            </div>
+
+            <div id="syllabus-container">
+                <!-- Dynamic Modules -->
+            </div>
+        </div>
+
+        <!-- CMS Editor Modal -->
+        <div id="cms-modal" class="modal-overlay"
+            style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000; justify-content: center; align-items: center;">
+            <div class="modal-content"
+                style="background: var(--card-bg); padding: 30px; border-radius: 15px; width: 90%; max-width: 500px; box-shadow: 0 10px 40px rgba(0,0,0,0.3);">
+                <h2 id="cms-modal-title" style="margin-bottom: 20px; color: var(--title-color);">Editar Contenido</h2>
+
+                <form id="cms-form" onsubmit="event.preventDefault();">
+                    <input type="hidden" id="cms-edit-type"> <!-- 'module' or 'lesson' -->
+                    <input type="hidden" id="cms-edit-action"> <!-- 'add' or 'edit' -->
+                    <input type="hidden" id="cms-parent-index"> <!-- Index of module -->
+                    <input type="hidden" id="cms-self-index"> <!-- Index of lesson -->
+
+                    <!-- Title Input -->
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: 500;">Título</label>
+                        <input type="text" id="cms-field-title" class="cms-input" required
+                            style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; background: var(--bg-color); color: var(--text-color);">
+                    </div>
+
+                    <!-- Lesson Only Fields -->
+                    <div id="cms-lesson-fields" style="display: none;">
+                        <!-- Content Type -->
+                        <div style="margin-bottom: 15px;">
+                            <label style="display: block; margin-bottom: 5px; font-weight: 500;">Tipo de
+                                Contenido</label>
+                            <select id="cms-field-type" onchange="toggleCmsFields()"
+                                style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; background: var(--bg-color); color: var(--text-color);">
+                                <option value="video">Clase de Video</option>
+                                <option value="pdf">Documento / PDF</option>
+                                <option value="quiz">Examen / Cuestionario</option>
+                            </select>
+                        </div>
+
+                        <div id="cms-video-section">
+                            <div style="margin-bottom: 15px;">
+                                <label style="display: block; margin-bottom: 5px; font-weight: 500;">Video</label>
+                                <!-- Video Upload -->
+                                <div style="border: 2px dashed #ccc; padding: 20px; text-align: center; border-radius: 8px; margin-bottom: 10px;"
+                                    id="cms-drop-zone">
+                                    <i class="fas fa-cloud-upload-alt" style="font-size: 2rem; color: #ccc;"></i>
+                                    <p style="margin: 10px 0; font-size: 0.9rem; color: #888;">Arrastra un video (Max
+                                        30s) o
+                                        usa la URL</p>
+                                    <input type="file" id="cms-video-file" accept="video/mp4,video/webm"
+                                        style="display: block; margin: 0 auto;">
+                                    <div id="video-preview-msg"
+                                        style="margin-top: 10px; font-size: 0.8rem; color: #2ecc71;"></div>
+                                </div>
+                                <label style="display: block; margin-bottom: 5px; font-size: 0.8rem;">O URL
+                                    Externa:</label>
+                                <input type="url" id="cms-field-video" class="cms-input" placeholder="https://..."
+                                    style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px;">
+                            </div>
+                        </div>
+
+                        <div style="margin-bottom: 15px;">
+                            <label style="display: block; margin-bottom: 5px; font-weight: 500;">Descripción</label>
+                            <textarea id="cms-field-desc" class="cms-input" rows="3"
+                                style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px;"></textarea>
+                        </div>
+
+
+                    </div>
+
+                    <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
+                        <button type="button" onclick="closeCmsModal()"
+                            style="padding: 10px 20px; border: none; background: #eee; border-radius: 8px; cursor: pointer; color: #333;">Cancelar</button>
+                        <button type="submit" id="cms-btn-save"
+                            style="padding: 10px 20px; border: none; background: var(--secondary-color); color: white; border-radius: 8px; cursor: pointer;">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- NEW: Dedicated Resource Management Modal -->
+        <div class="modal-overlay" id="resource-modal" style="display: none;">
+            <div class="modal-content" style="max-width: 600px;">
+                <h2 style="margin-bottom: 20px;">Gestión de Recursos</h2>
+                <p id="res-modal-subtitle" style="color: #888; margin-bottom: 20px;">Lección: ...</p>
+
+                <!-- List of Existing Resources -->
+                <div id="res-list-container"
+                    style="max-height: 200px; overflow-y: auto; margin-bottom: 20px; border: 1px solid #333; border-radius: 8px;">
+                    <!-- Items injected by JS -->
+                </div>
+
+                <!-- Add New Resource Form -->
+                <div
+                    style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 10px; border: 1px dashed #555;">
+                    <h4 style="margin-bottom: 15px;"><i class="fas fa-link"></i> Agregar Enlace</h4>
+
+                    <input type="url" id="res-url-input" placeholder="https://..."
+                        style="width: 100%; box-sizing: border-box; padding: 10px; margin-bottom: 10px; background: #222; border: 1px solid #444; color: white; border-radius: 5px;">
+
+                    <input type="text" id="res-name-input" placeholder="Nombre del recurso (Ej. Diapositivas)"
+                        style="width: 100%; box-sizing: border-box; padding: 10px; margin-bottom: 10px; background: #222; border: 1px solid #444; color: white; border-radius: 5px;">
+
+                    <button onclick="addResourceLink()" id="btn-add-res"
+                        style="width: 100%; box-sizing: border-box; padding: 10px; background: var(--primary-color); color: white; border: none; border-radius: 5px; cursor: pointer;">
+                        Agregar Enlace
+                    </button>
+                </div>
+
+                <div style="display: flex; justify-content: flex-end; margin-top: 20px;">
+                    <button type="button" onclick="closeResourceModal()"
+                        style="padding: 10px 20px; border: none; background: #444; color: white; border-radius: 8px; cursor: pointer;">Cerrar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- NEW: Quiz Builder Modal -->
+        <div class="modal-overlay" id="quiz-modal" style="display: none;">
+            <div class="modal-content" style="max-width: 700px; height: 80vh; display: flex; flex-direction: column;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h2 style="margin: 0;">Constructor de Examen</h2>
+                    <span id="quiz-modal-subtitle" style="color: #888;">Lección: ...</span>
+                </div>
+
+                <div style="flex: 1; overflow-y: auto; padding-right: 10px; margin-bottom: 20px;"
+                    id="quiz-questions-list">
+                    <!-- Questions injected by JS -->
+                </div>
+
+                <div style="border-top: 1px solid #444; padding-top: 20px;">
+                    <button onclick="addNewQuestion()"
+                        style="width: 100%; padding: 12px; border: 2px dashed #555; background: none; color: #888; border-radius: 8px; cursor: pointer; margin-bottom: 10px;">
+                        <i class="fas fa-plus"></i> Añadir Nueva Pregunta
+                    </button>
+
+                    <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                        <button type="button" onclick="closeQuizModal()"
+                            style="padding: 10px 20px; border: none; background: #444; color: white; border-radius: 8px; cursor: pointer;">Cerrar</button>
+                        <button type="button" onclick="saveQuizData()"
+                            style="padding: 10px 20px; border: none; background: var(--primary-color); color: white; border-radius: 8px; cursor: pointer;">Guardar
+                            Todo</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scripts -->
+        <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+        <script src="js/firebase-config.js"></script>
+        <script src="js/profile-data.js"></script>
+        <script src="js/logout_modal.js"></script>
+        <script src="js/theme.js"></script>
+        <script src="js/translations.js"></script>
+        <script src="js/course-cms.js"></script> <!-- The Brain -->
+</body>
+
+</html>

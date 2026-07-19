@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Institución | Ceind Institute</title>
+    <link rel="icon" type="image/png" href="assets/Favicon.png">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary-color: #003d80;
+            --secondary-color: #00a8ff;
+            --bg-color: #f4f7f6;
+            --sidebar-width: 280px;
+            --text-color: #444;
+            --card-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            --card-bg: #fff;
+            --title-color: #333;
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        body.dark-mode {
+            --bg-color: #0f0f0f;
+            --text-color: #d0d0d0;
+            --card-bg: #1e1e1e;
+            --card-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            --title-color: #fff;
+        }
+
+        body.dark-mode header h2 {
+            color: #fff;
+        }
+
+        /* View Transition for Theme Switch */
+        ::view-transition-old(root),
+        ::view-transition-new(root) {
+            animation: none;
+            mix-blend-mode: normal;
+        }
+
+        /* Icon Shapeshift Animation */
+        .theme-toggle i {
+            view-transition-name: theme-icon;
+        }
+
+        ::view-transition-old(theme-icon) {
+            animation: icon-out 0.5s cubic-bezier(0.76, 0, 0.24, 1) forwards;
+        }
+
+        ::view-transition-new(theme-icon) {
+            animation: icon-in 0.5s cubic-bezier(0.76, 0, 0.24, 1) forwards;
+        }
+
+        @keyframes icon-out {
+            0% {
+                transform: scale(1) rotate(0deg);
+                opacity: 1;
+            }
+
+            100% {
+                transform: scale(0) rotate(180deg);
+                opacity: 0;
+            }
+        }
+
+        @keyframes icon-in {
+            0% {
+                transform: scale(0) rotate(-180deg);
+                opacity: 0;
+            }
+
+            100% {
+                transform: scale(1) rotate(0deg);
+                opacity: 1;
+            }
+        }
+
+        /* Reset y Básicos */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-color);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        body.dark-mode ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        body.dark-mode ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* --- SIDEBAR --- */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--primary-color);
+            color: #fff;
+            position: fixed;
+            height: 100%;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 5px 0 15px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .user-profile:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* ESTILO DEL CIRCULO DEL AVATAR PEQUEÑO (NINJA) */
+        .user-avatar-sm {
+            width: 45px;
+            height: 45px;
+            background: var(--secondary-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: white;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .user-info h4 {
+            font-size: 0.95rem;
+            margin: 0;
+        }
+
+        .user-info span {
+            font-size: 0.75rem;
+            opacity: 0.8;
+        }
+
+        .menu-items li {
+            list-style: none;
+            margin-bottom: 10px;
+        }
+
+        .menu-items a {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 12px 15px;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            border-radius: 8px;
+            transition: var(--transition);
+            font-size: 0.95rem;
+        }
+
+        .menu-items a:hover,
+        .menu-items a.active {
+            background: var(--secondary-color);
+            color: #fff;
+            transform: translateX(5px);
+        }
+
+        .logout {
+            margin-top: auto;
+            color: #ff6b6b;
+        }
+
+        .logout a:hover {
+            background: rgba(255, 107, 107, 0.2);
+            color: #ff6b6b;
+        }
+
+        /* --- MAIN CONTENT --- */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            flex: 1;
+            padding: 40px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        header h2 {
+            color: var(--text-color);
+        }
+
+        .date-display {
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.2rem;
+            color: #888;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            padding: 5px;
+            margin-left: 15px;
+        }
+
+        .theme-toggle:hover {
+            color: var(--primary-color);
+            transform: scale(1.1);
+        }
+
+        body.dark-mode .theme-toggle {
+            color: #d0d0d0;
+        }
+
+        /* Placeholder Content */
+        .placeholder-content {
+            text-align: center;
+            padding: 50px;
+            background: var(--card-bg);
+            border-radius: 15px;
+            box-shadow: var(--card-shadow);
+            color: #888;
+        }
+
+
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 70px;
+                padding: 15px 10px;
+            }
+
+            .brand span,
+            .user-info,
+            .menu-items span,
+            .logout span {
+                display: none;
+            }
+
+            .main-content {
+                margin-left: 70px;
+                padding: 20px;
+            }
+
+            .user-profile {
+                padding: 0;
+                background: none;
+                justify-content: center;
+            }
+
+            .menu-items a {
+                justify-content: center;
+            }
+        }
+
+        /* Animated Gradient Background */
+        .animated-hero {
+            background: linear-gradient(-45deg, #003d80, #00a8ff, #2ecc71, #9b59b6);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            color: white;
+            padding: 50px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            text-align: center;
+            box-shadow: var(--card-shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        @keyframes gradientBG {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        /* Info Card Hover Effect */
+        .info-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .info-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15) !important;
+        }
+
+        /* Eye Blink Animation for Vision Card */
+        @keyframes parpadeo {
+
+            0%,
+            90%,
+            100% {
+                transform: scaleY(1);
+            }
+
+            95% {
+                transform: scaleY(0.1);
+            }
+        }
+
+        .fa-eye {
+            animation: parpadeo 4s infinite;
+            display: inline-block;
+            transform-origin: center;
+        }
+
+        /* Mission Icon Drift Animation */
+        @keyframes driftAndRush {
+            0% {
+                transform: translateX(0) scale(1, 1);
+            }
+
+            10% {
+                transform: translateX(-5px) scale(0.9, 1.1);
+            }
+
+            /* Rev up back */
+            20% {
+                transform: translateX(0) scale(1, 1);
+            }
+
+            30% {
+                transform: translateX(-5px) scale(0.9, 1.1);
+            }
+
+            /* Rev up back again */
+            40% {
+                transform: translateX(10px) scale(1.1, 0.9);
+            }
+
+            /* Start pushing forward */
+            50% {
+                transform: translateX(200px) scale(1.3, 0.7);
+                opacity: 0;
+            }
+
+            /* Speed off screen */
+            51% {
+                transform: translateX(-200px) scale(1, 1);
+                opacity: 0;
+            }
+
+            /* Reset position invisible */
+            60% {
+                transform: translateX(-20px) scale(1.1, 0.9);
+                opacity: 1;
+            }
+
+            /* Reappear slowing down */
+            70% {
+                transform: translateX(0) scale(1, 1);
+            }
+
+            /* Stop */
+            100% {
+                transform: translateX(0) scale(1, 1);
+            }
+
+            /* Rest */
+        }
+
+        .fa-bullseye {
+            display: inline-block;
+            animation: driftAndRush 4s cubic-bezier(0.25, 1, 0.5, 1) infinite;
+        }
+
+        .fa-eye {
+            animation: parpadeo 2s infinite;
+            display: inline-block;
+            transform-origin: center;
+        }
+
+        /* Smoke Effect */
+        .humo {
+            position: absolute;
+            bottom: 5px;
+            left: 50%;
+            width: 8px;
+            height: 8px;
+            background: rgba(150, 150, 150, 0.6);
+            /* Grayish for visibility on white */
+            border-radius: 50%;
+            filter: blur(4px);
+            animation: humo-fugaz 1s infinite;
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0;
+        }
+
+        @keyframes humo-fugaz {
+            0% {
+                transform: translate(-50%, 0) scale(1);
+                opacity: 0.6;
+            }
+
+            100% {
+                transform: translate(-30px, -20px) scale(3);
+                opacity: 0;
+            }
+        }
+
+        /* History Icon Rotation */
+        @keyframes rotateTime {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(-360deg);
+            }
+        }
+
+
+
+        .fa-undo {
+            animation: rotateTime 10s linear infinite;
+            display: inline-block;
+            transform-origin: center;
+        }
+
+        /* Inner Minute Hand */
+        .minute-hand {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 2px;
+            height: 12px;
+            background-color: var(--secondary-color);
+            transform-origin: bottom center;
+            /* Pivot at the center of the clock */
+            transform: translate(-50%, -100%) rotate(0deg);
+            /* Adjust position to center pivot */
+            animation: spinHand 2s linear infinite;
+            border-radius: 2px;
+            z-index: 2;
+        }
+
+        /* Inner Hour Hand */
+        .hour-hand {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 3px;
+            height: 8px;
+            background-color: var(--secondary-color);
+            transform-origin: bottom center;
+            transform: translate(-50%, -100%) rotate(45deg);
+            /* Start at a different angle */
+            animation: spinHand 12s linear infinite;
+            /* Slower rotation */
+            border-radius: 2px;
+            z-index: 1;
+        }
+
+
+
+        /* Center dot for the clock */
+        .clock-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 4px;
+            height: 4px;
+            background-color: var(--secondary-color);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        @keyframes spinHand {
+            from {
+                transform: translate(-50%, -100%) rotate(0deg);
+            }
+
+            to {
+                transform: translate(-50%, -100%) rotate(360deg);
+            }
+        }
+
+        /* Values Animations */
+        @keyframes heartbeat {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            15% {
+                transform: scale(1.15);
+            }
+
+            30% {
+                transform: scale(1);
+            }
+
+            45% {
+                transform: scale(1.15);
+            }
+
+            60% {
+                transform: scale(1);
+            }
+        }
+
+        @keyframes glowPulse {
+
+            0%,
+            100% {
+                filter: drop-shadow(0 0 2px rgba(241, 196, 15, 0.4));
+                transform: scale(1);
+            }
+
+            50% {
+                filter: drop-shadow(0 0 10px rgba(241, 196, 15, 0.8));
+                transform: scale(1.1);
+            }
+        }
+
+        @keyframes bounceJump {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-8px);
+            }
+        }
+
+        @keyframes medalSwing {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            25% {
+                transform: rotate(10deg);
+            }
+
+            50% {
+                transform: rotate(0deg);
+            }
+
+            75% {
+                transform: rotate(-10deg);
+            }
+
+            100% {
+                transform: rotate(0deg);
+            }
+        }
+
+        .fa-hand-holding-heart {
+            animation: heartbeat 2s ease-in-out infinite;
+            transform-origin: center;
+            display: inline-block;
+        }
+
+        .fa-lightbulb {
+            animation: glowPulse 2s ease-in-out infinite;
+            transform-origin: center;
+            display: inline-block;
+        }
+
+        .fa-users {
+            animation: bounceJump 1.5s ease-in-out infinite;
+            transform-origin: bottom;
+            display: inline-block;
+        }
+
+        .fa-medal {
+            animation: medalSwing 3s ease-in-out infinite;
+            transform-origin: top center;
+            display: inline-block;
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="sidebar">
+        <div class="brand">
+            <i class="fas fa-graduation-cap"></i> <span>Ceind</span>
+        </div>
+
+        <div class="user-profile clickable-profile" onclick="window.location.href='profile.html'">
+            <div class="user-avatar-sm"></div>
+            <div class="user-info">
+                <h4 id="sidebar-user-name">Cargando...</h4>
+                <span id="sidebar-user-subtitle">...</span>
+            </div>
+        </div>
+
+        <ul class="menu-items">
+            <li><a href="institution.html" class="active"><i class="fas fa-university"></i> <span
+                        data-i18n="menu_institution">Página de la
+                        institución</span></a></li>
+            <li><a href="activity.html"><i class="fas fa-globe"></i> <span
+                        data-i18n="menu_activity">Actividad</span></a></li>
+
+            <li id="student-link"><a href="dashboard.html"><i class="fas fa-book"></i>
+                    <span data-i18n="menu_courses">Mis Cursos</span></a></li>
+            <li id="admin-link" style="display: none;"><a href="admin_panel.html"><i class="fas fa-th-large"></i>
+                    <span data-i18n="menu_panel">Panel de Control</span></a></li>
+
+            <li><a href="schedule.html"><i class="fas fa-calendar-alt"></i> <span
+                        data-i18n="menu_schedule">Horario</span></a></li>
+            <li><a href="grades.html"><i class="fas fa-chart-line"></i> <span
+                        data-i18n="menu_grades">Calificaciones</span></a></li>
+            <li><a href="messages.html"><i class="fas fa-paper-plane"></i> <span
+                        data-i18n="menu_messages">Mensajes</span> <span id="msg-counter-badge"
+                        style="display:none; background:red; color:white; padding:2px 6px; border-radius:10px; font-size:0.7rem; margin-left:auto;">0</span></a>
+            </li>
+        </ul>
+
+        <ul class="menu-items logout">
+            <li><a href="index.html" onclick="localStorage.removeItem('isLoggedIn');"><i
+                        class="fas fa-sign-out-alt"></i> <span data-i18n="menu_logout">Cerrar Sesión</span></a></li>
+        </ul>
+    </nav>
+
+    <main class="main-content">
+        <header>
+            <div>
+                <h2>Página de la Institución</h2>
+                <p class="date-display">Información y noticias del instituto.</p>
+            </div>
+            <div>
+                <button id="theme-toggle" class="theme-toggle" title="Cambiar tema" style="display: inline-block;">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Hero Section -->
+        <div class="animated-hero">
+            <h1 style="margin-bottom: 15px; font-size: 2.2rem; text-shadow: 0 2px 4px rgba(0,0,0,0.2);">Bienvenidos a
+                Ceind Institute</h1>
+            <p
+                style="opacity: 0.95; max-width: 600px; margin: 0 auto; font-size: 1.1rem; text-shadow: 0 1px 2px rgba(0,0,0,0.1);">
+                Formando líderes del futuro con excelencia académica y valores humanos.</p>
+
+            <!-- Optional subtle overlay pattern -->
+            <div
+                style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: url('https://www.transparenttextures.com/patterns/cubes.png'); opacity: 0.1; pointer-events: none; z-index: 1;">
+            </div>
+
+            <!-- Canvas for Mouse Stalker Effect -->
+            <canvas id="hero-canvas"
+                style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; mix-blend-mode: screen;"></canvas>
+        </div>
+
+        <!-- Info Grid -->
+        <div class="inst-grid"
+            style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+
+            <!-- History Card -->
+            <div class="info-card"
+                style="background: var(--card-bg); padding: 25px; border-radius: 12px; box-shadow: var(--card-shadow);">
+                <div class="icon-box"
+                    style="width: 50px; height: 50px; background: rgba(0, 168, 255, 0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-bottom: 15px; position: relative;">
+                    <!-- Outer Ring (Arrow) -->
+                    <i class="fas fa-undo" style="font-size: 1.5rem; color: var(--secondary-color);"></i>
+                    <!-- Inner Hands -->
+                    <div class="minute-hand"></div>
+                    <div class="hour-hand"></div>
+                    <div class="clock-center"></div>
+                </div>
+                <h3 style="color: var(--title-color); margin-bottom: 10px;">Nuestra Historia</h3>
+                <p style="color: var(--text-color); font-size: 0.9rem; line-height: 1.6;">
+                    Fundado en 2010, Ceind Institute nació con la visión de transformar la educación técnica. A lo largo
+                    de los años, hemos crecido hasta convertirnos en un referente de innovación educativa, adaptándonos
+                    a las nuevas tecnologías y necesidades del mercado global.
+                </p>
+            </div>
+
+            <!-- Mission Card -->
+            <div class="info-card"
+                style="background: var(--card-bg); padding: 25px; border-radius: 12px; box-shadow: var(--card-shadow);">
+                <div class="icon-box"
+                    style="width: 50px; height: 50px; background: rgba(46, 204, 113, 0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-bottom: 15px; position: relative; overflow: visible;">
+                    <i class="fas fa-bullseye"
+                        style="font-size: 1.5rem; color: #2ecc71; position: relative; z-index: 2;"></i>
+                    <!-- Smoke Particles -->
+                    <div class="humo" style="animation-delay: 0s;"></div>
+                    <div class="humo" style="animation-delay: 0.2s;"></div>
+                    <div class="humo" style="animation-delay: 0.4s;"></div>
+                </div>
+                <h3 style="color: var(--title-color); margin-bottom: 10px;">Misión</h3>
+                <p style="color: var(--text-color); font-size: 0.9rem; line-height: 1.6;">
+                    Proporcionar una educación integral de alta calidad que empodere a nuestros estudiantes para
+                    alcanzar su máximo potencial profesional y personal, fomentando el pensamiento crítico, la
+                    creatividad y la responsabilidad social.
+                </p>
+            </div>
+
+            <!-- Vision Card -->
+            <div class="info-card"
+                style="background: var(--card-bg); padding: 25px; border-radius: 12px; box-shadow: var(--card-shadow);">
+                <div class="icon-box"
+                    style="width: 50px; height: 50px; background: rgba(155, 89, 182, 0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-bottom: 15px;">
+                    <i class="fas fa-eye" style="font-size: 1.5rem; color: #9b59b6;"></i>
+                </div>
+                <h3 style="color: var(--title-color); margin-bottom: 10px;">Visión</h3>
+                <p style="color: var(--text-color); font-size: 0.9rem; line-height: 1.6;">
+                    Ser reconocidos nacional e internacionalmente como una institución líder en excelencia académica,
+                    impulsando la investigación y el desarrollo tecnológico para contribuir al progreso sostenible de la
+                    sociedad.
+                </p>
+            </div>
+
+            <!-- Values Card (Full Width) -->
+            <div class="info-card"
+                style="grid-column: 1 / -1; background: var(--card-bg); padding: 25px; border-radius: 12px; box-shadow: var(--card-shadow);">
+                <h3 style="color: var(--title-color); margin-bottom: 20px; text-align: center;">Nuestros Valores</h3>
+                <div class="values-container"
+                    style="display: flex; flex-wrap: wrap; gap: 20px; justify-content: center;">
+                    <div class="value-item" style="text-align: center; min-width: 120px;">
+                        <i class="fas fa-hand-holding-heart"
+                            style="font-size: 2rem; color: #e74c3c; margin-bottom: 10px;"></i>
+                        <h4 style="color: var(--text-color); font-size: 0.95rem;">Integridad</h4>
+                    </div>
+                    <div class="value-item" style="text-align: center; min-width: 120px;">
+                        <i class="fas fa-lightbulb" style="font-size: 2rem; color: #f1c40f; margin-bottom: 10px;"></i>
+                        <h4 style="color: var(--text-color); font-size: 0.95rem;">Innovación</h4>
+                    </div>
+                    <div class="value-item" style="text-align: center; min-width: 120px;">
+                        <i class="fas fa-users" style="font-size: 2rem; color: #3498db; margin-bottom: 10px;"></i>
+                        <h4 style="color: var(--text-color); font-size: 0.95rem;">Colaboración</h4>
+                    </div>
+                    <div class="value-item" style="text-align: center; min-width: 120px;">
+                        <i class="fas fa-medal" style="font-size: 2rem; color: #e67e22; margin-bottom: 10px;"></i>
+                        <h4 style="color: var(--text-color); font-size: 0.95rem;">Excelencia</h4>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script src="js/translations.js"></script>
+    <script type="module" src="js/hero-animation.js"></script>
+    <script>
+
+    </script>
+
+    <!-- Firebase & Profile Integration -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics-compat.js"></script>
+    <script src="js/firebase-config.js"></script>
+    <script src="js/profile-data.js"></script>
+
+    <script src="js/logout_modal.js"></script>
+    <script src="js/theme.js"></script>
+    <script src="js/notifications.js"></script>
+</body>
+
+</html>

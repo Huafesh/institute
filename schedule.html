@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Horario | Ceind Institute</title>
+    <link rel="icon" type="image/png" href="assets/Favicon.png">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary-color: #003d80;
+            --secondary-color: #00a8ff;
+            --accent-color: #ffcc00;
+            --bg-color: #f4f7f6;
+            --sidebar-width: 280px;
+            --text-color: #444;
+            --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            --card-bg: #fff;
+            --title-color: #111;
+            --border-radius: 20px;
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            --success-color: #2ecc71;
+            --locked-color: #95a5a6;
+        }
+
+        body.dark-mode {
+            --bg-color: #0f0f0f;
+            --text-color: #d0d0d0;
+            --card-bg: #1e1e1e;
+            --title-color: #f0f0f0;
+            --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            --locked-color: #555;
+        }
+
+        /* View Transition for Theme Switch */
+        ::view-transition-old(root),
+        ::view-transition-new(root) {
+            animation: none;
+            mix-blend-mode: normal;
+        }
+
+        .theme-toggle i {
+            view-transition-name: theme-icon;
+        }
+
+        ::view-transition-old(theme-icon) {
+            animation: icon-out 0.5s cubic-bezier(0.76, 0, 0.24, 1) forwards;
+        }
+
+        ::view-transition-new(theme-icon) {
+            animation: icon-in 0.5s cubic-bezier(0.76, 0, 0.24, 1) forwards;
+        }
+
+        @keyframes icon-out {
+            0% {
+                transform: scale(1) rotate(0deg);
+                opacity: 1;
+            }
+
+            100% {
+                transform: scale(0) rotate(180deg);
+                opacity: 0;
+            }
+        }
+
+        @keyframes icon-in {
+            0% {
+                transform: scale(0) rotate(-180deg);
+                opacity: 0;
+            }
+
+            100% {
+                transform: scale(1) rotate(0deg);
+                opacity: 1;
+            }
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-color);
+            display: flex;
+            min-height: 100vh;
+            color: var(--text-color);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        body.dark-mode ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        body.dark-mode ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* --- SIDEBAR --- */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--primary-color);
+            color: #fff;
+            position: fixed;
+            height: 100%;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 5px 0 15px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .user-profile:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .user-avatar-sm {
+            width: 45px;
+            height: 45px;
+            background: var(--secondary-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: white;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .user-info h4 {
+            font-size: 0.95rem;
+            margin: 0;
+        }
+
+        .user-info span {
+            font-size: 0.75rem;
+            opacity: 0.8;
+        }
+
+        .menu-items li {
+            list-style: none;
+            margin-bottom: 10px;
+        }
+
+        .menu-items a {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 12px 15px;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            border-radius: 8px;
+            transition: var(--transition);
+            font-size: 0.95rem;
+        }
+
+        .menu-items a:hover,
+        .menu-items a.active {
+            background: var(--secondary-color);
+            color: #fff;
+            transform: translateX(5px);
+        }
+
+        .logout {
+            margin-top: auto;
+            color: #ff6b6b;
+        }
+
+        .logout a:hover {
+            background: rgba(255, 107, 107, 0.2);
+            color: #ff6b6b;
+        }
+
+        /* --- MAIN CONTENT --- */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            flex: 1;
+            padding: 40px;
+            transition: var(--transition);
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        header h2 {
+            color: var(--title-color);
+            margin-bottom: 5px;
+        }
+
+        .date-display {
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.2rem;
+            color: #888;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-radius: 50%;
+        }
+
+        .theme-toggle:hover {
+            background: none;
+            color: var(--primary-color);
+            transform: scale(1.1);
+        }
+
+        body.dark-mode .theme-toggle {
+            color: #d0d0d0;
+        }
+
+        body.dark-mode .theme-toggle:hover {
+            background: none;
+        }
+
+        /* --- CALENDAR STYLES --- */
+        .calendar-container {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            padding: 30px;
+            border: 1px solid transparent;
+        }
+
+        body.dark-mode .calendar-container {
+            border-color: #333;
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .month-year {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--title-color);
+            text-transform: capitalize;
+        }
+
+        .calendar-controls button {
+            background: transparent;
+            border: 1px solid #ddd;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            color: var(--text-color);
+            margin-left: 10px;
+            transition: 0.3s;
+        }
+
+        .calendar-controls button:hover {
+            background: var(--secondary-color);
+            color: white;
+            border-color: var(--secondary-color);
+        }
+
+        body.dark-mode .calendar-controls button {
+            border-color: #444;
+            color: #ccc;
+        }
+
+        /* Grid */
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 15px;
+        }
+
+        .day-name {
+            text-align: center;
+            font-weight: 600;
+            color: #888;
+            padding-bottom: 15px;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+        }
+
+        .calendar-day {
+            min-height: 120px;
+            background: rgba(0, 0, 0, 0.02);
+            border-radius: 12px;
+            padding: 10px;
+            position: relative;
+            transition: 0.3s;
+            border: 1px solid transparent;
+        }
+
+        .calendar-day:hover {
+            background: rgba(0, 0, 0, 0.04);
+        }
+
+        body.dark-mode .calendar-day {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        body.dark-mode .calendar-day:hover {
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        .day-number {
+            font-weight: 700;
+            color: var(--text-color);
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .calendar-day.today {
+            border: 2px solid var(--secondary-color);
+            background: rgba(0, 168, 255, 0.05);
+        }
+
+        .calendar-day.today .day-number {
+            color: var(--secondary-color);
+        }
+
+        .calendar-day.empty {
+            background: transparent;
+            pointer-events: none;
+        }
+
+        /* Events */
+        .event-pill {
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            margin-bottom: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 5px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            font-weight: 500;
+        }
+
+        /* LOCKED STATE */
+        .event-pill.locked {
+            background: #eee;
+            color: #777;
+            border-left: 3px solid var(--locked-color);
+        }
+
+        body.dark-mode .event-pill.locked {
+            background: #2a2a2a;
+            color: #888;
+            border-left-color: #555;
+        }
+
+        /* UNLOCKED STATE */
+        .event-pill.unlocked {
+            background: rgba(0, 168, 255, 0.15);
+            color: #007bbd;
+            border-left: 3px solid var(--secondary-color);
+        }
+
+        .event-pill.unlocked:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 10px rgba(0, 168, 255, 0.2);
+            background: var(--secondary-color);
+            color: white;
+        }
+
+        body.dark-mode .event-pill.unlocked {
+            background: rgba(0, 168, 255, 0.2);
+            color: #4fc3f7;
+        }
+
+        body.dark-mode .event-pill.unlocked:hover {
+            color: white;
+        }
+
+        .event-pill.exam {
+            border-left-color: #ff4757;
+        }
+
+        .event-pill.exam.unlocked {
+            background: rgba(255, 71, 87, 0.15);
+            color: #d63031;
+        }
+
+        .event-pill.exam.unlocked:hover {
+            background: #ff4757;
+            color: white;
+        }
+
+        /* Toast */
+        .toast-notification {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #333;
+            color: #fff;
+            padding: 12px 25px;
+            border-radius: 50px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            z-index: 3000;
+            opacity: 0;
+            transition: 0.4s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9rem;
+        }
+
+        .toast-notification.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        .toast-icon {
+            color: var(--accent-color);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 70px;
+                padding: 15px 10px;
+            }
+
+            .brand span,
+            .user-info,
+            .menu-items span,
+            .logout span {
+                display: none;
+            }
+
+            .main-content {
+                margin-left: 70px;
+                padding: 20px;
+            }
+
+            .calendar-grid {
+                grid-template-columns: repeat(1, 1fr);
+                gap: 10px;
+            }
+
+            /* Stack on mobile */
+            .calendar-day {
+                min-height: auto;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+            }
+
+            .event-pill {
+                margin-bottom: 0;
+                width: auto;
+            }
+        }
+
+        /* --- MODAL ANIMATIONS --- */
+        .modal-overlay {
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .modal-overlay.open {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            transform: scale(0.9);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            /* Bouncy effect */
+        }
+
+        .modal-overlay.open .modal-content {
+            transform: scale(1);
+            opacity: 1;
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="sidebar">
+        <div class="brand">
+            <i class="fas fa-graduation-cap"></i> <span>Ceind</span>
+        </div>
+
+        <div class="user-profile clickable-profile" onclick="window.location.href='profile.html'">
+            <div class="user-avatar-sm"></div>
+            <div class="user-info">
+                <h4 id="sidebar-user-name">Cargando...</h4>
+                <span id="sidebar-user-subtitle">...</span>
+            </div>
+        </div>
+
+        <ul class="menu-items">
+            <li><a href="institution.html"><i class="fas fa-university"></i> <span
+                        data-i18n="menu_institution">Institución</span></a></li>
+            <li><a href="activity.html"><i class="fas fa-globe"></i> <span
+                        data-i18n="menu_activity">Actividad</span></a></li>
+            <li><a href="dashboard.html"><i class="fas fa-book"></i> <span data-i18n="menu_courses">Mis
+                        Cursos</span></a></li>
+            <li id="admin-link" style="display: none;"><a href="admin_panel.html"><i class="fas fa-th-large"></i>
+                    <span data-i18n="menu_panel">Panel de Control</span></a></li>
+            <li><a href="schedule.html" class="active"><i class="fas fa-calendar-alt"></i> <span
+                        data-i18n="menu_schedule">Horario</span></a></li>
+            <li><a href="grades.html"><i class="fas fa-chart-line"></i> <span
+                        data-i18n="menu_grades">Calificaciones</span></a></li>
+            <li><a href="messages.html"><i class="fas fa-paper-plane"></i> <span
+                        data-i18n="menu_messages">Mensajes</span> <span id="msg-counter-badge"
+                        style="display:none; background:red; color:white; padding:2px 6px; border-radius:10px; font-size:0.7rem; margin-left:auto;">0</span></a>
+            </li>
+        </ul>
+
+        <ul class="menu-items logout">
+            <li><a href="index.html" onclick="localStorage.removeItem('isLoggedIn');"><i
+                        class="fas fa-sign-out-alt"></i> <span data-i18n="menu_logout">Cerrar Sesión</span></a></li>
+        </ul>
+    </nav>
+
+    <main class="main-content">
+        <header>
+            <div>
+                <h2>Agenda Académica</h2>
+                <p class="date-display">Revisa fechas de entregas y exámenes.</p>
+            </div>
+            <div>
+                <button id="theme-toggle" class="theme-toggle" title="Cambiar tema">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+        </header>
+
+        <div class="calendar-container">
+            <div class="calendar-header">
+                <h3 class="month-year" id="month-display">Enero 2026</h3>
+                <div class="calendar-controls">
+                    <button onclick="goToToday()"
+                        style="font-size: 0.9rem; font-weight: 600; width: auto; padding: 0 15px;">Hoy</button>
+                    <button onclick="changeMonth(-1)"><i class="fas fa-chevron-left"></i></button>
+                    <button onclick="changeMonth(1)"><i class="fas fa-chevron-right"></i></button>
+                </div>
+            </div>
+
+            <div class="calendar-grid" id="calendar-grid">
+            </div>
+        </div>
+    </main>
+
+    <!-- ADD EVENT MODAL -->
+    <div id="event-modal" class="modal-overlay"
+        style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000; justify-content: center; align-items: center;">
+        <div class="modal-content"
+            style="background: var(--card-bg); padding: 30px; border-radius: 15px; width: 400px; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
+            <h3 style="margin-bottom: 20px; color: var(--title-color);">Nuevo Evento Académico</h3>
+            <input type="text" id="evt-title" placeholder="Título (ej: Examen Final)"
+                style="width: 100%; padding: 10px; margin-bottom: 15px; border-radius: 5px; border: 1px solid #ccc; background: transparent; color: var(--text-color);">
+
+            <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                <input type="date" id="evt-date"
+                    style="flex: 1; padding: 10px; border-radius: 5px; border: 1px solid #ccc; background: transparent; color: var(--text-color);">
+                <select id="evt-type"
+                    style="padding: 10px; border-radius: 5px; border: 1px solid #ccc; background: var(--bg-color); color: var(--text-color);">
+                    <option value="task">Tarea/Entrega</option>
+                    <option value="exam">Examen</option>
+                </select>
+            </div>
+
+            <input type="text" id="evt-link" placeholder="Enlace (Opcional)"
+                style="width: 100%; padding: 10px; margin-bottom: 20px; border-radius: 5px; border: 1px solid #ccc; background: transparent; color: var(--text-color);">
+
+            <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                <button onclick="closeEventModal()"
+                    style="padding: 10px 20px; border: none; background: transparent; color: #666; cursor: pointer;">Cancelar</button>
+                <button onclick="saveEvent()"
+                    style="padding: 10px 20px; border: none; background: var(--primary-color); color: white; border-radius: 5px; cursor: pointer;">Guardar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- DELETE CONFIRMATION MODAL -->
+    <div id="delete-modal" class="modal-overlay"
+        style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000; justify-content: center; align-items: center;">
+        <div class="modal-content"
+            style="background: var(--card-bg); padding: 30px; border-radius: 15px; width: 350px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); text-align: center;">
+            <i class="fas fa-trash-alt" style="font-size: 3rem; color: #ff6b6b; margin-bottom: 20px;"></i>
+            <h3 style="margin-bottom: 10px; color: var(--title-color);">¿Eliminar Evento?</h3>
+            <p style="color: #888; margin-bottom: 25px; font-size: 0.9rem;">Esta acción no se puede deshacer.</p>
+
+            <div style="display: flex; gap: 10px; justify-content: center;">
+                <button onclick="closeDeleteModal()"
+                    style="padding: 10px 20px; border: 1px solid #ccc; background: transparent; color: var(--text-color); border-radius: 8px; cursor: pointer;">Cancelar</button>
+                <button onclick="confirmDelete()"
+                    style="padding: 10px 20px; border: none; background: #ff6b6b; color: white; border-radius: 8px; cursor: pointer;">Eliminar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Action Button for Admins/Teachers -->
+    <button id="add-event-btn" onclick="openEventModal()"
+        style="display: none; position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px; border-radius: 50%; background: var(--secondary-color); color: white; border: none; font-size: 1.5rem; box-shadow: 0 4px 15px rgba(0,168,255,0.4); cursor: pointer; z-index: 1000; transition: transform 0.2s;">
+        <i class="fas fa-plus"></i>
+    </button>
+
+    <div id="toast" class="toast-notification">
+        <i class="fas fa-info-circle toast-icon"></i>
+        <span id="toast-msg">Mensaje</span>
+    </div>
+
+    <script src="js/translations.js"></script>
+    <!-- Firebase Dependencies (Compat) -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="js/firebase-config.js"></script>
+    <script src="js/profile-data.js"></script>
+    <script src="js/theme.js"></script>
+    <script src="js/notifications.js"></script>
+    <script src="js/logout_modal.js"></script>
+
+    <script>
+        // --- CALENDAR LOGIC WITH FIREBASE ---
+        let currentDate = new Date();
+        const monthDisplay = document.getElementById('month-display');
+        const calendarGrid = document.getElementById('calendar-grid');
+        let events = []; // Will be fetched from Firebase
+        let serverTimeOffset = 0;
+
+        // 0. Anti-Cheat: Sync Time
+        async function syncTimeWithServer() {
+            try {
+                const response = await fetch('https://worldtimeapi.org/api/ip');
+                const data = await response.json();
+                const serverTime = new Date(data.datetime).getTime();
+                const localTime = new Date().getTime();
+                serverTimeOffset = serverTime - localTime;
+                console.log("Time Synced. Offset:", serverTimeOffset);
+            } catch (e) {
+                console.warn("Time sync failed, using local time.", e);
+            }
+            loadEvents();
+        }
+
+        function getRealDate() {
+            return new Date(new Date().getTime() + serverTimeOffset);
+        }
+
+        // 1. Check Roles & Permissions
+        function checkPermissions() {
+            const role = localStorage.getItem('role');
+            if (role === 'admin' || role === 'teacher') {
+                document.getElementById('add-event-btn').style.display = 'block';
+                // Show Admin link in sidebar too if admin
+                if (role === 'admin') document.getElementById('admin-link').style.display = 'block';
+            }
+        }
+
+        // Listen for auth state to confirm role vs DB (Security best practice)
+        firebase.auth().onAuthStateChanged(user => {
+            if (user) {
+                // Fetch latest role to be sure
+                db.collection('users').doc(user.uid).get().then(doc => {
+                    if (doc.exists) {
+                        const data = doc.data();
+                        const role = data.role || 'student';
+                        localStorage.setItem('role', role); // Sync local
+                        checkPermissions();
+                    }
+                });
+                syncTimeWithServer(); // Start Time Sync then load events
+            }
+        });
+
+        // 2. Load Events from Firestore
+        function loadEvents() {
+            db.collection('calendar_events').onSnapshot(snapshot => {
+                events = [];
+                snapshot.forEach(doc => {
+                    events.push({ id: doc.id, ...doc.data() });
+                });
+                renderCalendar();
+            });
+        }
+
+        // 3. Render Calendar
+        function renderCalendar() {
+            const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+            const lastDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+            const daysInMonth = lastDayOfMonth.getDate();
+            const startDayIndex = firstDayOfMonth.getDay() === 0 ? 6 : firstDayOfMonth.getDay() - 1;
+
+            const monthNames = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+            monthDisplay.innerText = `${monthNames[currentDate.getMonth()]} ${currentDate.getFullYear()}`;
+
+            calendarGrid.innerHTML = "";
+
+            // Day Headers
+            const dayNames = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"];
+            dayNames.forEach(d => {
+                const el = document.createElement('div');
+                el.className = 'day-name';
+                el.innerText = d;
+                calendarGrid.appendChild(el);
+            });
+
+            // Empty cells
+            for (let i = 0; i < startDayIndex; i++) {
+                const empty = document.createElement('div');
+                empty.className = 'calendar-day empty';
+                calendarGrid.appendChild(empty);
+            }
+
+            // Days
+            const today = getRealDate(); // Use SAFE Date
+            for (let i = 1; i <= daysInMonth; i++) {
+                const dayEl = document.createElement('div');
+                dayEl.className = 'calendar-day';
+
+                // Check Today
+                if (i === today.getDate() && currentDate.getMonth() === today.getMonth() && currentDate.getFullYear() === today.getFullYear()) {
+                    dayEl.classList.add('today');
+                }
+
+                dayEl.innerHTML = `<span class="day-number">${i}</span>`;
+
+                // Filter Events for this specific Day/Month/Year
+                const dayEvents = events.filter(e => {
+                    // Firebase Timestamp to Date conversion (if saved as date string, simplified here)
+                    // Assuming e.date is "YYYY-MM-DD" string for simplicity in input
+                    const parts = e.date.split('-');
+                    const eYear = parseInt(parts[0]);
+                    const eMonth = parseInt(parts[1]) - 1; // Month is 0-indexed in JS
+                    const eDay = parseInt(parts[2]);
+
+                    return eDay === i && eMonth === currentDate.getMonth() && eYear === currentDate.getFullYear();
+                });
+
+                dayEvents.forEach(evt => {
+                    // Unlock logic: Is unlocked if today >= event date
+                    // Parse Date
+                    const parts = evt.date.split('-');
+                    const evtDateObj = new Date(parts[0], parts[1] - 1, parts[2]);
+                    evtDateObj.setHours(0, 0, 0, 0);
+
+                    const todayReset = getRealDate(); // Anti-Cheat Check
+                    todayReset.setHours(0, 0, 0, 0);
+
+                    const isUnlocked = todayReset >= evtDateObj;
+                    const lockClass = isUnlocked ? 'unlocked' : 'locked';
+                    const icon = isUnlocked ? (evt.type === 'exam' ? 'fas fa-file-signature' : 'fas fa-book-open') : 'fas fa-lock';
+                    const pillClass = evt.type === 'exam' ? 'exam' : '';
+
+                    const pill = document.createElement('div');
+                    pill.className = `event-pill ${pillClass} ${lockClass}`;
+                    pill.innerHTML = `<span>${evt.title}</span> <i class="${icon}"></i>`;
+
+                    // Admin Delete Option (Right Click)
+                    const role = localStorage.getItem('role');
+                    if (role === 'admin' || role === 'teacher') {
+                        pill.oncontextmenu = (e) => {
+                            e.preventDefault();
+                            openDeleteModal(evt.id);
+                        }
+                    }
+
+                    pill.onclick = (e) => {
+                        e.stopPropagation();
+                        if (isUnlocked) {
+                            if (evt.link) window.open(evt.link, '_blank');
+                        } else {
+                            // Only Admins/Teachers see it unlocked always? Maybe later.
+                            showToast(`Disponible el ${evtDateObj.toLocaleDateString()}`);
+                        }
+                    };
+
+                    dayEl.appendChild(pill);
+                });
+
+                calendarGrid.appendChild(dayEl);
+            }
+        }
+
+        function changeMonth(step) {
+            currentDate.setMonth(currentDate.getMonth() + step);
+            renderCalendar();
+        }
+
+        function goToToday() {
+            currentDate = getRealDate(); // Reset to "Real" Today
+            renderCalendar();
+        }
+
+        // --- ADD EVENT LOGIC ---
+        function openEventModal() {
+            const modal = document.getElementById('event-modal');
+            modal.style.display = 'flex';
+            void modal.offsetWidth; // Force Reflow
+            modal.classList.add('open');
+        }
+
+        function closeEventModal() {
+            const modal = document.getElementById('event-modal');
+            modal.classList.remove('open');
+            setTimeout(() => {
+                modal.style.display = 'none';
+            }, 300);
+        }
+
+        async function saveEvent() {
+            const title = document.getElementById('evt-title').value;
+            const date = document.getElementById('evt-date').value;
+            const type = document.getElementById('evt-type').value;
+            const link = document.getElementById('evt-link').value;
+
+            if (!title || !date) {
+                showToast("Faltan datos obligatorios");
+                return;
+            }
+
+            try {
+                await db.collection('calendar_events').add({
+                    title,
+                    date, // saved as YYYY-MM-DD
+                    type,
+                    link,
+                    createdAt: new Date()
+                });
+                showToast("Evento agregado ✅");
+                closeEventModal();
+                // Inputs cleanup
+                document.getElementById('evt-title').value = '';
+                document.getElementById('evt-link').value = '';
+            } catch (error) {
+                console.error(error);
+                showToast("Error al guardar");
+            }
+        }
+
+        // --- DELETE MODAL LOGIC ---
+        let eventPendingDelete = null;
+
+        function openDeleteModal(id) {
+            eventPendingDelete = id;
+            const modal = document.getElementById('delete-modal');
+            modal.style.display = 'flex';
+            void modal.offsetWidth;
+            modal.classList.add('open');
+        }
+
+        function closeDeleteModal() {
+            eventPendingDelete = null;
+            const modal = document.getElementById('delete-modal');
+            modal.classList.remove('open');
+            setTimeout(() => {
+                modal.style.display = 'none';
+            }, 300);
+        }
+
+        async function confirmDelete() {
+            if (!eventPendingDelete) return;
+
+            const btn = document.querySelector('#delete-modal button:last-child');
+            const originalText = btn.innerText;
+            btn.innerText = "Eliminando...";
+            btn.disabled = true;
+
+            try {
+                await db.collection('calendar_events').doc(eventPendingDelete).delete();
+                showToast("Evento eliminado 🗑️");
+                closeDeleteModal();
+            } catch (error) {
+                console.error(error);
+                showToast("Error al eliminar");
+            } finally {
+                btn.innerText = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        // Removed old deleteEvent specific function since confirmDelete handles it now, or keep empty if referenced elsewhere (unlikely).
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-msg').innerText = msg;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Init initial render (empty until load)
+        renderCalendar();
+    </script>
+</body>
+
+</html>
